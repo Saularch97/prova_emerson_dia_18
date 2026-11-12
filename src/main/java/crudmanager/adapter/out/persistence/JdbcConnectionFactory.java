@@ -45,8 +45,10 @@ public class JdbcConnectionFactory {
 
     public Connection getConnection() {
         try {
+            // No Tomcat o DriverManager não enxerga o driver de WEB-INF/lib sem o registro explícito.
+            Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             throw new ModelException("Falha na conexão com o BD", e);
         }
     }
