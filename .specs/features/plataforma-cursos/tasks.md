@@ -831,7 +831,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 **Done when**:
 
 - [x] Campo `<input type="hidden" name="page">` no form
-- [ ] JS das listagens preenche `page` (pendente: cada listagem preenche `#modal-page` ao ser criada/migrada nos lotes 5-7)
+- [x] JS das listagens preenche `page` (as cinco listagens preenchem `#modal-page`; concluído na T51)
 - [x] Gate passes: build gate
 
 **Tests**: none
@@ -1110,9 +1110,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Colunas e ações do spec
-- [ ] Modal de exclusão com `page`
-- [ ] Gate passes: build gate
+- [x] Colunas e ações do spec
+- [x] Modal de exclusão com `page`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
