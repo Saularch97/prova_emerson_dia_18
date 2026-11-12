@@ -32,7 +32,7 @@
 			    </div>
 			 
 			    <div class="col-md-3">
-			        <a href="/crud-manager/post/form" class="btn btn-danger pull-right h2"><span class="glyphicon glyphicon-plus" /></span>&nbspAdicionar Post</a>
+			        <a href="${pageContext.request.contextPath}/post/form" class="btn btn-danger pull-right h2"><span class="glyphicon glyphicon-plus" /></span>&nbspAdicionar Post</a>
 			    </div>
 	     	</div>
 	 
@@ -51,25 +51,30 @@
 			                 </tr>
 			            </thead>
 			            <tbody>
-			            	<c:forEach var="post" items="${posts}">
+			            	<c:forEach var="post" items="${pageData.items}">
 								<tr>
-				                    <td>${post.getPostDate()}</td>
-				                    <td>${post.getContent()}</td>
-				                    <td>${post.getUser().getName()}</td>				                    
+				                    <td><c:out value="${post.postDate}" /></td>
+				                    <td><c:out value="${post.content}" /></td>
+				                    <td><c:out value="${post.user.name}" /></td>
 				                    <td class="actions">
 				                        <a class="btn btn-info btn-xs" 
-				                           href="${pageContext.request.contextPath}/post/update?postId=${post.getId()}" >
+				                           href="${pageContext.request.contextPath}/post/update?postId=${post.id}" >
 				                           <span class="glyphicon glyphicon-edit"></span>
 				                        </a>
 				                    </td>
 				                    <td class="actions">
-				                        <a class="btn btn-danger btn-xs modal-remove" post-id="${post.getId()}" 
-				                           post-content="${post.getContent()}" data-toggle="modal" 
+				                        <a class="btn btn-danger btn-xs modal-remove" post-id="${post.id}" 
+				                           post-content="<c:out value='${post.content}' />" data-toggle="modal" 
 				                           data-target="#delete-modal"  href="#"><span 
 				                           class="glyphicon glyphicon-trash"></span></a>
 				                    </td>
 				                </tr>
 							</c:forEach>
+							<c:if test="${empty pageData.items}">
+								<tr>
+									<td colspan="5" class="text-center">Nenhum post cadastrado.</td>
+								</tr>
+							</c:if>
 			            </tbody>
 			         </table>
 			 
@@ -78,19 +83,13 @@
 	 
 	     	<div id="bottom" class="row">
 	     		<div class="col-md-12">
-			        <ul class="pagination">
-			            <li class="disabled"><a>&lt; Anterior</a></li>
-			            <li class="disabled"><a>1</a></li>
-			            <li><a href="#">2</a></li>
-			            <li><a href="#">3</a></li>
-			            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-			        </ul><!-- /.pagination -->
+			        <%@include file="pagination.jsp"%>
 			    </div>
 	     	</div>
 		</div>
 		
-		<script type="text/javascript" src="js/jquery.min.js"></script>
-		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 			    // fecha o alert após 3 segundos
@@ -105,7 +104,8 @@
 		            var postId = $(this).attr('post-id');
 		            $(".modal-body #hiddenValue").text("o post '"+postContent+"'");
 		            $("#id").attr( "value", postId);
-		            $("#form").attr( "action","post/delete");
+		            $("#form").attr( "action","${pageContext.request.contextPath}/post/delete");
+		            $("#modal-page").val(${pageData.page});
 		        })
 			});
 		</script>
