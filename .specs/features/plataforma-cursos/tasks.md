@@ -770,9 +770,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Campos `email` e `password`, botão "Entrar"
-- [ ] Mostra `${message}`; sem menu de navegação
-- [ ] Gate passes: build gate
+- [x] Campos `email` e `password`, botão "Entrar"
+- [x] Mostra `${message}`; sem menu de navegação
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
