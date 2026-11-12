@@ -213,9 +213,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Cinco classes unchecked/checked conforme o design
-- [ ] Compila
-- [ ] Gate passes: build gate
+- [x] Cinco classes unchecked/checked conforme o design
+- [x] Compila
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
