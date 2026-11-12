@@ -550,9 +550,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] IT cobre save, update, delete, findPage, count
-- [ ] `mvn -q verify` passa
-- [ ] Gate passes: `mvn -q verify`
+- [x] IT cobre save, update, delete, findPage, count
+- [x] `mvn -q verify` passa
+- [x] Gate passes: `mvn -q verify`
 
 **Tests**: integration
 **Gate**: full

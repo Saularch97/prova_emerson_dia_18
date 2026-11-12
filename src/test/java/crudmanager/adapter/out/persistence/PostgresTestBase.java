@@ -1,5 +1,9 @@
 package crudmanager.adapter.out.persistence;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.MountableFile;
@@ -23,5 +27,26 @@ public abstract class PostgresTestBase {
                 "DB_URL", POSTGRES.getJdbcUrl(),
                 "DB_USER", POSTGRES.getUsername(),
                 "DB_PASSWORD", POSTGRES.getPassword()));
+    }
+
+    /** Executa um comando de limpeza/preparo direto no banco. */
+    protected static void execute(String sql) {
+        try (Connection c = connectionFactory().getConnection(); Statement st = c.createStatement()) {
+            st.execute(sql);
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** Executa uma consulta de uma linha e uma coluna numérica. */
+    protected static long scalar(String sql) {
+        try (Connection c = connectionFactory().getConnection();
+                Statement st = c.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+            rs.next();
+            return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
