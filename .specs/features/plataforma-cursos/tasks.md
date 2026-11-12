@@ -173,9 +173,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes cobrem 0 itens, 1 página, várias páginas, última página parcial
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes cobrem 0 itens, 1 página, várias páginas, última página parcial
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
