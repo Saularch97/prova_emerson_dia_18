@@ -1190,9 +1190,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `docker build .` conclui
-- [ ] WAR copiado para `webapps/crud-manager.war`
-- [ ] Gate passes: build gate
+- [x] `docker build .` conclui
+- [x] WAR copiado para `webapps/crud-manager.war`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
