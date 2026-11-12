@@ -179,7 +179,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(domain): Page`
+**Commit**: `feat(domain): adiciona Page`
 
 ---
 
@@ -258,7 +258,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: none
 **Gate**: build
-**Commit**: `feat(domain): Course`
+**Commit**: `feat(domain): adiciona Course`
 
 ---
 
@@ -277,7 +277,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: none
 **Gate**: build
-**Commit**: `feat(domain): Enrollment`
+**Commit**: `feat(domain): adiciona Enrollment`
 
 ---
 
@@ -357,7 +357,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): AuthService`
+**Commit**: `feat(app): adiciona AuthService`
 
 ---
 
@@ -377,7 +377,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): UserService`
+**Commit**: `feat(app): adiciona UserService`
 
 ---
 
@@ -397,7 +397,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): PostService`
+**Commit**: `feat(app): adiciona PostService`
 
 ---
 
@@ -417,7 +417,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): CompanyService`
+**Commit**: `feat(app): adiciona CompanyService`
 
 ---
 
@@ -437,7 +437,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): CourseService`
+**Commit**: `feat(app): adiciona CourseService`
 
 ---
 
@@ -457,7 +457,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): EnrollmentService`
+**Commit**: `feat(app): adiciona EnrollmentService`
 
 ---
 
@@ -497,7 +497,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: none
 **Gate**: build
-**Commit**: `refactor(db): DBHandler para PostgreSQL`
+**Commit**: `refactor(db): adiciona DBHandler para PostgreSQL`
 
 ---
 
@@ -536,7 +536,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: integration
 **Gate**: full
-**Commit**: `feat(db): JdbcUserDAO`
+**Commit**: `feat(db): adiciona JdbcUserDAO`
 
 ---
 
@@ -556,7 +556,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: integration
 **Gate**: full
-**Commit**: `feat(db): JdbcPostDAO`
+**Commit**: `feat(db): adiciona JdbcPostDAO`
 
 ---
 
@@ -576,7 +576,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: integration
 **Gate**: full
-**Commit**: `feat(db): JdbcCompanyDAO`
+**Commit**: `feat(db): adiciona JdbcCompanyDAO`
 
 ---
 
@@ -596,7 +596,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: integration
 **Gate**: full
-**Commit**: `feat(db): JdbcCourseDAO`
+**Commit**: `feat(db): adiciona JdbcCourseDAO`
 
 ---
 
@@ -616,7 +616,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: integration
 **Gate**: full
-**Commit**: `feat(db): JdbcEnrollmentDAO`
+**Commit**: `feat(db): adiciona JdbcEnrollmentDAO`
 
 ---
 
@@ -636,7 +636,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(app): DAOFactory e composition root`
+**Commit**: `feat(app): adiciona DAOFactory e composition root`
 
 ---
 
@@ -656,7 +656,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(web): WebUtil`
+**Commit**: `feat(web): adiciona WebUtil`
 
 ---
 
@@ -736,7 +736,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(auth): AuthFilter`
+**Commit**: `feat(auth): adiciona AuthFilter`
 
 ---
 
@@ -756,7 +756,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(auth): LoginController`
+**Commit**: `feat(auth): adiciona LoginController`
 
 ---
 
@@ -856,7 +856,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `refactor(web): UsersController hexagonal`
+**Commit**: `refactor(web): adiciona UsersController hexagonal`
 
 ---
 
@@ -916,7 +916,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `refactor(web): PostsController hexagonal`
+**Commit**: `refactor(web): adiciona PostsController hexagonal`
 
 ---
 
@@ -975,7 +975,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `refactor(web): CompaniesController hexagonal`
+**Commit**: `refactor(web): adiciona CompaniesController hexagonal`
 
 ---
 
@@ -1034,7 +1034,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(web): CoursesController`
+**Commit**: `feat(web): adiciona CoursesController`
 
 ---
 
@@ -1094,7 +1094,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: unit
 **Gate**: quick
-**Commit**: `feat(web): EnrollmentsController`
+**Commit**: `feat(web): adiciona EnrollmentsController`
 
 ---
 
@@ -1194,7 +1194,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: none
 **Gate**: build
-**Commit**: `build(docker): Dockerfile multi-stage`
+**Commit**: `build(docker): adiciona Dockerfile multi-stage`
 
 ---
 
@@ -1311,7 +1311,7 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Tests**: none
 **Gate**: build
-**Commit**: `docs: README da plataforma de cursos`
+**Commit**: `docs: adiciona README da plataforma de cursos`
 
 ---
 
@@ -1525,5 +1525,5 @@ Proof: run all | ✓ EDGE-5
 The feature's live state, written as it happens - a compaction gives no warning.
 
 **Settled mid-build:** Build provisório até a T56 - user: "Linha Build provisória (Recomendado)"; execução em 8 lotes com sub-agentes - user: "Sim, 8 lotes (Recomendado)"
-**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89
+**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89, returned; Lote 2 (Fase 3, T12-T18) enviado em HEAD ceaa9b1
 **Walked:** none
