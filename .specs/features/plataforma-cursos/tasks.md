@@ -810,9 +810,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Usa os atributos `pageData` e `pageBaseUrl`
-- [ ] Compila no Tomcat (verificado pelo smoke)
-- [ ] Gate passes: build gate
+- [x] Usa os atributos `pageData` e `pageBaseUrl`
+- [x] Compila no Tomcat (verificado pelo smoke)
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
