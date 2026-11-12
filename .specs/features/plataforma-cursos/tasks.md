@@ -690,9 +690,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Filtros mapeados em `/*` na ordem correta
-- [ ] `error-page` para `java.lang.Throwable` e 500
-- [ ] Gate passes: build gate
+- [x] Filtros mapeados em `/*` na ordem correta
+- [x] `error-page` para `java.lang.Throwable` e 500
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
