@@ -193,9 +193,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes `PAG-01`, `PAG-02`, `PAG-05`, `PAG-06` passam
-- [ ] Offset calculado como `(page-1)*10`
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes `PAG-01`, `PAG-02`, `PAG-05`, `PAG-06` passam
+- [x] Offset calculado como `(page-1)*10`
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
