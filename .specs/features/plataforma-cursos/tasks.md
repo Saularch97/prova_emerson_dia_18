@@ -311,9 +311,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `list(int page)`, `find`, `create`, `update`, `delete`; `AuthUseCase.login`
-- [ ] Sem imports de `jakarta.servlet`
-- [ ] Gate passes: build gate
+- [x] `list(int page)`, `find`, `create`, `update`, `delete`; `AuthUseCase.login`
+- [x] Sem imports de `jakarta.servlet`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
