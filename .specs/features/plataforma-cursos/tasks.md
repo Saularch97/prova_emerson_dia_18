@@ -152,10 +152,10 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Script roda limpo num `postgres:16` vazio
-- [ ] Seed tem mais de 10 registros em cada listagem
-- [ ] Hash do seed no formato `iterações:saltB64:hashB64` do `Pbkdf2PasswordHasher`
-- [ ] Gate passes: build gate
+- [x] Script roda limpo num `postgres:16` vazio
+- [x] Seed tem mais de 10 registros em cada listagem
+- [x] Hash do seed no formato `iterações:saltB64:hashB64` do `Pbkdf2PasswordHasher`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
