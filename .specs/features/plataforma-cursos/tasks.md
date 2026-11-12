@@ -991,8 +991,8 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Itera `page.items`; paginação incluída; contexto sem caminho fixo
-- [ ] Gate passes: build gate
+- [x] Itera `page.items`; paginação incluída; contexto sem caminho fixo
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
