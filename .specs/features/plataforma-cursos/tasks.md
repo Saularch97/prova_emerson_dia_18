@@ -670,9 +670,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Teste: define encoding UTF-8 na request e na response
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Teste: define encoding UTF-8 na request e na response
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
