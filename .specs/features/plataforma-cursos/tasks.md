@@ -610,9 +610,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] IT: par repetido rejeitado, edição da própria não conflita, `paid=false` persiste
-- [ ] `mvn -q verify` passa
-- [ ] Gate passes: `mvn -q verify`
+- [x] IT: par repetido rejeitado, edição da própria não conflita, `paid=false` persiste
+- [x] `mvn -q verify` passa
+- [x] Gate passes: `mvn -q verify`
 
 **Tests**: integration
 **Gate**: full
