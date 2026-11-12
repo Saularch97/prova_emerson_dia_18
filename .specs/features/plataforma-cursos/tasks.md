@@ -1070,9 +1070,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Sete campos com os tipos HTML do spec
-- [ ] Instrutor e nível pré-selecionados na edição
-- [ ] Gate passes: build gate
+- [x] Sete campos com os tipos HTML do spec
+- [x] Instrutor e nível pré-selecionados na edição
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
