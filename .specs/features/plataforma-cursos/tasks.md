@@ -1010,9 +1010,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Erros por campo exibidos
-- [ ] Select de usuários mantido
-- [ ] Gate passes: build gate
+- [x] Erros por campo exibidos
+- [x] Select de usuários mantido
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
