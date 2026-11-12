@@ -590,9 +590,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] IT: excluir curso com matrícula → `RelatedDataException`; `active=false` persiste; descrição com acentos e emoji volta idêntica (`EDGE-3`)
-- [ ] `mvn -q verify` passa
-- [ ] Gate passes: `mvn -q verify`
+- [x] IT: excluir curso com matrícula → `RelatedDataException`; `active=false` persiste; descrição com acentos e emoji volta idêntica (`EDGE-3`)
+- [x] `mvn -q verify` passa
+- [x] Gate passes: `mvn -q verify`
 
 **Tests**: integration
 **Gate**: full
