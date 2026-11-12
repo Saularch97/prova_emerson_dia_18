@@ -511,9 +511,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Teste `DB-01`: FK `courses.instructor_id`, `enrollments.student_id`, `enrollments.course_id`, unique `(student_id, course_id)`, coluna `users.password_hash`
-- [ ] `mvn -q verify` passa
-- [ ] Gate passes: `mvn -q verify`
+- [x] Teste `DB-01`: FK `courses.instructor_id`, `enrollments.student_id`, `enrollments.course_id`, unique `(student_id, course_id)`, coluna `users.password_hash`
+- [x] `mvn -q verify` passa
+- [x] Gate passes: `mvn -q verify`
 
 **Tests**: integration
 **Gate**: full
