@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/plataforma-cursos/design.md`
-**Status**: Approved
+**Status**: Done
 **Approved**: 2026-11-12 - user: "aprovado"
 **Build**: `mvn -q -DskipTests package; docker compose config -q`
 **Run all**: `mvn verify`
@@ -1527,5 +1527,5 @@ Proof: run all | ✓ EDGE-5
 The feature's live state, written as it happens - a compaction gives no warning.
 
 **Settled mid-build:** Build provisório até a T56 - user: "Linha Build provisória (Recomendado)"; execução em 8 lotes com sub-agentes - user: "Sim, 8 lotes (Recomendado)"
-**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89, returned; Lote 2 (Fase 3, T12-T18) enviado em HEAD c0fac92, returned; Lote 3 (Fase 4, T19-T27) enviado em HEAD 4393df2, returned; Lote 4 (Fase 5, T28-T37) enviado em HEAD 6c45956, returned; Lote 5 (Fase 6, T38-T43) enviado em HEAD 5f925e3, returned; Lote 6 (Fase 7, T44-T52) enviado em HEAD 0ce50b3, returned; Lote 7 (Fase 8a, T53-T56) enviado em HEAD ceb2671, returned; Lote 8 (Fase 8b, T57-T61) enviado em HEAD 8d15561, returned; Verifier enviado em HEAD af11e62, returned (FAIL, 7 achados); correção em passe único enviada em HEAD c037cf7
-**Walked:** none
+**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89, returned; Lote 2 (Fase 3, T12-T18) enviado em HEAD c0fac92, returned; Lote 3 (Fase 4, T19-T27) enviado em HEAD 4393df2, returned; Lote 4 (Fase 5, T28-T37) enviado em HEAD 6c45956, returned; Lote 5 (Fase 6, T38-T43) enviado em HEAD 5f925e3, returned; Lote 6 (Fase 7, T44-T52) enviado em HEAD 0ce50b3, returned; Lote 7 (Fase 8a, T53-T56) enviado em HEAD ceb2671, returned; Lote 8 (Fase 8b, T57-T61) enviado em HEAD 8d15561, returned; Verifier enviado em HEAD af11e62, returned (FAIL, 7 achados); correção em passe único enviada em HEAD c037cf7; correção em passe único returned; round 2 por check_proofs.py
+**Walked:** Sem capturas binding nem navegador gráfico: cada Independent Test foi percorrido por `scripts/smoke.sh` com curl e cookie jar contra `http://localhost:8080/crud-manager/` (login `emerson@mail.com` / `senha123`, banco no seed). Login: sem sessão `/courses` vai a `/login`; entrar leva a `/`; Sair volta ao login. Cursos e Matrículas: lista, formulário com selects do banco, criar, editar, excluir e mensagens. Paginação: seed com 12 a 15 itens por lista mostra 10 na página 1 e o resto na 2; `?page=abc`, `0` e `999` tratados. Docker: `docker compose up --build --wait`, reinício do app preserva dados, banco parado mostra mensagem sem stack trace. Estados vazios e página única rodam num stack descartável (`crudcursos-smoke`, porta 18080).
