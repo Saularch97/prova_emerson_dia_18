@@ -471,9 +471,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Teste `DOCK-03`: sem `DB_PASSWORD` falha com mensagem; com as três lê os valores
-- [ ] Nenhuma credencial literal no código
-- [ ] Gate passes: `mvn -q test`
+- [x] Teste `DOCK-03`: sem `DB_PASSWORD` falha com mensagem; com as três lê os valores
+- [x] Nenhuma credencial literal no código
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
