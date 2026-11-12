@@ -17,6 +17,8 @@ import static org.mockito.Mockito.when;
 import crudmanager.application.port.in.CourseUseCase;
 import crudmanager.application.port.in.EnrollmentUseCase;
 import crudmanager.application.port.in.UserUseCase;
+import crudmanager.application.port.out.EnrollmentDAO;
+import crudmanager.application.service.EnrollmentService;
 import crudmanager.domain.Page;
 import crudmanager.domain.error.DuplicateException;
 import crudmanager.domain.error.ModelException;
@@ -40,6 +42,9 @@ class EnrollmentsControllerTest extends ControllerTestBase {
     private UserUseCase users;
     private CourseUseCase courses;
     private EnrollmentsController controller;
+    private EnrollmentDAO dao;
+    /** Controller ligado ao serviço real (DAO mockado): prova a mescla de erros de parse e de regra. */
+    private EnrollmentsController realController;
     private final List<User> allUsers = List.of(new User(1), new User(2));
     private final List<Course> allCourses = List.of(new Course(5), new Course(6));
 
@@ -49,6 +54,8 @@ class EnrollmentsControllerTest extends ControllerTestBase {
         users = mock(UserUseCase.class);
         courses = mock(CourseUseCase.class);
         controller = new EnrollmentsController(enrollments, users, courses);
+        dao = mock(EnrollmentDAO.class);
+        realController = new EnrollmentsController(new EnrollmentService(dao), users, courses);
         when(users.listAll()).thenReturn(allUsers);
         when(courses.listAll()).thenReturn(allCourses);
         jsp("/enrollments.jsp");
@@ -293,16 +300,63 @@ class EnrollmentsControllerTest extends ControllerTestBase {
     }
 
     @Test
-    @DisplayName("MATR-08 progresso não numérico e data inválida viram erros de campo sem chamar o serviço")
+    @DisplayName("MATR-08 progresso não numérico e data inválida viram erros de campo e nada é gravado")
     void unparsableProgressAndDate() throws Exception {
         route("/enrollment/insert", params(Map.of("progress", "abc", "enrolledOn", "31/02/2026")));
 
-        controller.doPost(req, resp);
+        realController.doPost(req, resp);
 
-        verify(enrollments, never()).create(any());
-        verify(req).setAttribute("errors", Map.of("enrolledOn", EnrollmentsController.INVALID_DATE,
-                "progress", EnrollmentsController.INVALID_PROGRESS));
+        verify(dao, never()).save(any());
+        verify(req).setAttribute("errors", Map.of("enrolledOn", "Informe uma data de matrícula válida.",
+                "progress", "O progresso deve estar entre 0 e 100."));
+        verify(req).setAttribute("progressInput", "abc");
         verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("MATR-08 situação vazia e progresso abc mostram as duas mensagens e nada é gravado")
+    void emptyStatusAndNonNumericProgress() throws Exception {
+        route("/enrollment/insert", params(Map.of("status", "", "progress", "abc")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("progress", "O progresso deve estar entre 0 e 100.");
+        expected.put("status", "Informe a situação.");
+        verify(req).setAttribute("errors", expected);
+        verify(req).setAttribute("progressInput", "abc");
+        verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("MATR-08 data inválida e aluno vazio mostram as duas mensagens e nada é gravado")
+    void invalidDateAndEmptyStudent() throws Exception {
+        when(dao.findById(3)).thenReturn(enrollment(3));
+        route("/enrollment/update", params(Map.of("enrollmentId", "3", "enrolledOn", "xx", "student", "")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).update(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("enrolledOn", "Informe uma data de matrícula válida.");
+        expected.put("student", "Informe o aluno.");
+        verify(req).setAttribute("errors", expected);
+        verify(req).setAttribute("action", "update");
+    }
+
+    @Test
+    @DisplayName("MATR-08 concluída com data inválida mostra a mensagem da data e nada é gravado")
+    void completedWithInvalidDate() throws Exception {
+        route("/enrollment/insert", params(Map.of("status", "CONCLUIDA", "progress", "99", "enrolledOn", "xx")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("enrolledOn", "Informe uma data de matrícula válida.");
+        expected.put("progress", "Matrícula concluída exige progresso 100.");
+        verify(req).setAttribute("errors", expected);
     }
 
     @Test

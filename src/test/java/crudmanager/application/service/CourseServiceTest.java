@@ -79,6 +79,13 @@ class CourseServiceTest {
         assertTrue(e.getErrors().keySet().containsAll(java.util.List.of(
                 "title", "description", "startDate", "instructor", "price", "level")));
         assertEquals("Informe o título.", e.getErrors().get("title"));
+        assertEquals("Informe a descrição.", e.getErrors().get("description"));
+        assertEquals("Informe a data de início.", e.getErrors().get("startDate"));
+        assertEquals("Informe o instrutor.", e.getErrors().get("instructor"));
+        assertEquals("Informe o nível.", e.getErrors().get("level"));
+        assertEquals("Informe um preço válido (número maior ou igual a zero, com até 2 casas decimais).",
+                e.getErrors().get("price"));
+        assertEquals(6, e.getErrors().size());
         assertEquals(0, courses.count());
     }
 

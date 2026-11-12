@@ -144,8 +144,9 @@ public class CoursesController extends HttpServlet {
     }
 
     /**
-     * Devolve false quando já respondeu (formulário reexibido). Preço não numérico e data inválida viram erro de
-     * campo sem chamar o serviço; o texto digitado do preço volta ao formulário em {@code priceInput}.
+     * Devolve false quando já respondeu (formulário reexibido). Preço não numérico e data inválida viram null e
+     * o serviço sempre roda (ele rejeita null, então nada é gravado); a mensagem de parse prevalece na mesma chave e
+     * as demais mensagens do serviço aparecem juntas. O texto digitado do preço volta em {@code priceInput}.
      */
     private boolean save(HttpServletRequest req, HttpServletResponse resp, boolean update)
             throws ServletException, IOException {
@@ -171,15 +172,13 @@ public class CoursesController extends HttpServlet {
             errors.put("startDate", INVALID_DATE);
         }
         try {
-            if (errors.isEmpty()) {
-                if (update) {
-                    courses().update(course);
-                } else {
-                    courses().create(course);
-                }
+            if (update) {
+                courses().update(course);
+            } else {
+                courses().create(course);
             }
         } catch (ValidationException e) {
-            errors.putAll(e.getErrors());
+            e.getErrors().forEach(errors::putIfAbsent);
         }
         if (!errors.isEmpty()) {
             req.setAttribute("errors", errors);

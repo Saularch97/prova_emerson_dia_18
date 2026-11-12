@@ -16,6 +16,8 @@ import static org.mockito.Mockito.when;
 
 import crudmanager.application.port.in.CourseUseCase;
 import crudmanager.application.port.in.UserUseCase;
+import crudmanager.application.port.out.CourseDAO;
+import crudmanager.application.service.CourseService;
 import crudmanager.domain.Page;
 import crudmanager.domain.error.ModelException;
 import crudmanager.domain.error.NotFoundException;
@@ -38,6 +40,9 @@ class CoursesControllerTest extends ControllerTestBase {
     private CourseUseCase courses;
     private UserUseCase users;
     private CoursesController controller;
+    private CourseDAO dao;
+    /** Controller ligado ao serviço real (DAO mockado): prova a mescla de erros de parse e de regra. */
+    private CoursesController realController;
     private final List<User> allUsers = List.of(new User(1), new User(2));
 
     @BeforeEach
@@ -45,6 +50,8 @@ class CoursesControllerTest extends ControllerTestBase {
         courses = mock(CourseUseCase.class);
         users = mock(UserUseCase.class);
         controller = new CoursesController(courses, users);
+        dao = mock(CourseDAO.class);
+        realController = new CoursesController(new CourseService(dao), users);
         when(users.listAll()).thenReturn(allUsers);
         jsp("/courses.jsp");
         jsp("/form-course.jsp");
@@ -248,14 +255,14 @@ class CoursesControllerTest extends ControllerTestBase {
     }
 
     @Test
-    @DisplayName("CURSO-08 preço não numérico vira erro no campo price, mantém o texto digitado e não chama o serviço")
+    @DisplayName("CURSO-08 preço não numérico vira erro no campo price, mantém o texto digitado e nada é gravado")
     void nonNumericPrice() throws Exception {
         route("/course/insert", params(Map.of("price", "abc")));
 
-        controller.doPost(req, resp);
+        realController.doPost(req, resp);
 
-        verify(courses, never()).create(any());
-        verify(req).setAttribute("errors", Map.of("price", CoursesController.INVALID_PRICE));
+        verify(dao, never()).save(any());
+        verify(req).setAttribute("errors", Map.of("price", "Informe um preço numérico válido (ex.: 99,90)."));
         verify(req).setAttribute("priceInput", "abc");
         verify(req).setAttribute("action", "insert");
         verify(dispatcher).forward(req, resp);
@@ -263,17 +270,63 @@ class CoursesControllerTest extends ControllerTestBase {
     }
 
     @Test
-    @DisplayName("CURSO-08 data de início inválida vira erro no campo startDate e não chama o serviço")
+    @DisplayName("CURSO-08 data de início inválida vira erro no campo startDate e nada é gravado")
     void invalidStartDate() throws Exception {
-        when(courses.find(4)).thenReturn(course(4));
+        when(dao.findById(4)).thenReturn(course(4));
         route("/course/update", params(Map.of("courseId", "4", "startDate", "31/02/2026")));
 
-        controller.doPost(req, resp);
+        realController.doPost(req, resp);
 
-        verify(courses, never()).update(any());
-        verify(req).setAttribute("errors", Map.of("startDate", CoursesController.INVALID_DATE));
+        verify(dao, never()).update(any());
+        verify(req).setAttribute("errors", Map.of("startDate", "Informe uma data de início válida."));
         verify(req).setAttribute("action", "update");
         verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("CURSO-08 título vazio e preço abc mostram as duas mensagens e nada é gravado")
+    void emptyTitleAndNonNumericPrice() throws Exception {
+        route("/course/insert", params(Map.of("title", "", "price", "abc")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("price", "Informe um preço numérico válido (ex.: 99,90).");
+        expected.put("title", "Informe o título.");
+        verify(req).setAttribute("errors", expected);
+        verify(req).setAttribute("priceInput", "abc");
+        verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("CURSO-08 data inválida e descrição vazia mostram as duas mensagens e nada é gravado")
+    void invalidDateAndEmptyDescription() throws Exception {
+        route("/course/insert", params(Map.of("startDate", "garbage", "description", "")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("startDate", "Informe uma data de início válida.");
+        expected.put("description", "Informe a descrição.");
+        verify(req).setAttribute("errors", expected);
+        verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("CURSO-08 preço abc, data inválida e título vazio mostram as três mensagens, a de parse prevalece")
+    void allThreeInvalid() throws Exception {
+        route("/course/insert", params(Map.of("title", "", "price", "abc", "startDate", "x")));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("price", "Informe um preço numérico válido (ex.: 99,90).");
+        expected.put("startDate", "Informe uma data de início válida.");
+        expected.put("title", "Informe o título.");
+        verify(req).setAttribute("errors", expected);
     }
 
     @Test

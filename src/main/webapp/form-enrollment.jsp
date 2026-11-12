@@ -68,11 +68,11 @@
 					</div>
 
 					<div class="form-group col-md-5 ${not empty errors.progress ? 'has-error' : ''}">
-						<label for="progress">Progresso: <output id="progress-value"><c:out value="${enrollment.progress}" /></output>%</label>
+						<label for="progress">Progresso: <output id="progress-value"><c:out value="${not empty progressInput ? progressInput : enrollment.progress}" /></output>%</label>
 						<input type="range" min="0" max="100" step="1" id="progress" name="progress" 
 							   style="width: 100%;"
 							   oninput="document.getElementById('progress-value').textContent = this.value"
-							   value="<c:out value='${enrollment.progress}' />">
+							   value="<c:out value='${not empty progressInput ? progressInput : enrollment.progress}' />">
 						<c:if test="${not empty errors.progress}"><span class="help-block"><c:out value="${errors.progress}" /></span></c:if>
 					</div>
 

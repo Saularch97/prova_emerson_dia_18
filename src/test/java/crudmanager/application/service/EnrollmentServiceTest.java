@@ -97,7 +97,11 @@ class EnrollmentServiceTest {
     void requiredFields() {
         Enrollment e = new Enrollment();
         ValidationException ex = invalid(() -> service.create(e));
-        assertTrue(ex.getErrors().keySet().containsAll(java.util.List.of("student", "course", "enrolledOn", "status")));
+        assertEquals("Informe o aluno.", ex.getErrors().get("student"));
+        assertEquals("Informe o curso.", ex.getErrors().get("course"));
+        assertEquals("Informe a data da matrícula.", ex.getErrors().get("enrolledOn"));
+        assertEquals("Informe a situação.", ex.getErrors().get("status"));
+        assertEquals(4, ex.getErrors().size());
         assertEquals(0, enrollments.count());
     }
 
@@ -107,7 +111,8 @@ class EnrollmentServiceTest {
         for (int bad : new int[] {-1, 101}) {
             Enrollment e = valid(0, 1, 1);
             e.setProgress(bad);
-            assertTrue(invalid(() -> service.create(e)).getErrors().containsKey("progress"));
+            assertEquals("O progresso deve estar entre 0 e 100.",
+                    invalid(() -> service.create(e)).getErrors().get("progress"));
         }
         Enrollment zero = valid(0, 1, 1);
         zero.setProgress(0);

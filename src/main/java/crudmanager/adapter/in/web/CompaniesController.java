@@ -150,17 +150,18 @@ public class CompaniesController extends HttpServlet {
         company.setUser(userFrom(req.getParameter("user")));
         Map<String, String> errors = new LinkedHashMap<>();
         company.setStart(date(req.getParameter("start"), "start", errors));
-        company.setEnd(date(req.getParameter("end"), "end", errors));
+        LocalDate end = date(req.getParameter("end"), "end", errors);
+        // Saída ilegível vira LocalDate.MIN: o serviço sempre roda e a rejeita (anterior à entrada) ou rejeita a
+        // entrada ausente, então nada é gravado; a mensagem de parse prevalece.
+        company.setEnd(errors.containsKey("end") ? LocalDate.MIN : end);
         try {
-            if (errors.isEmpty()) {
-                if (update) {
-                    companies().update(company);
-                } else {
-                    companies().create(company);
-                }
+            if (update) {
+                companies().update(company);
+            } else {
+                companies().create(company);
             }
         } catch (ValidationException e) {
-            errors.putAll(e.getErrors());
+            e.getErrors().forEach(errors::putIfAbsent);
         }
         if (!errors.isEmpty()) {
             req.setAttribute("errors", errors);
@@ -183,7 +184,7 @@ public class CompaniesController extends HttpServlet {
         WebUtil.success(req, "Empresa '" + company.getName() + "' deletada com sucesso.");
     }
 
-    /** Data inválida vira erro de campo; vazia vira null e o serviço decide se é obrigatória. */
+    /** Data inválida vira erro de campo e null; vazia vira null e o serviço decide se é obrigatória. */
     private static LocalDate date(String raw, String field, Map<String, String> errors) {
         try {
             return WebUtil.parseDate(raw);

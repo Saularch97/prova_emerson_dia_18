@@ -13,6 +13,8 @@ import static org.mockito.Mockito.when;
 
 import crudmanager.application.port.in.CompanyUseCase;
 import crudmanager.application.port.in.UserUseCase;
+import crudmanager.application.port.out.CompanyDAO;
+import crudmanager.application.service.CompanyService;
 import crudmanager.domain.Page;
 import crudmanager.domain.error.ModelException;
 import crudmanager.domain.error.NotFoundException;
@@ -33,6 +35,8 @@ class CompaniesControllerTest extends ControllerTestBase {
     private CompanyUseCase companies;
     private UserUseCase users;
     private CompaniesController controller;
+    private CompanyDAO dao;
+    private CompaniesController realController;
     private final List<User> allUsers = List.of(new User(1), new User(2));
 
     @BeforeEach
@@ -40,6 +44,8 @@ class CompaniesControllerTest extends ControllerTestBase {
         companies = mock(CompanyUseCase.class);
         users = mock(UserUseCase.class);
         controller = new CompaniesController(companies, users);
+        dao = mock(CompanyDAO.class);
+        realController = new CompaniesController(new CompanyService(dao), users);
         when(users.listAll()).thenReturn(allUsers);
         jsp("/companies.jsp");
         jsp("/form-company.jsp");
@@ -160,15 +166,42 @@ class CompaniesControllerTest extends ControllerTestBase {
     }
 
     @Test
-    @DisplayName("ARQ-06 POST /company/insert com data inválida reexibe o formulário com erro no campo e não chama o serviço")
+    @DisplayName("ARQ-06 POST /company/insert com data inválida reexibe o formulário com erro no campo e nada é gravado")
     void insertInvalidDate() throws Exception {
         route("/company/insert", Map.of("name", "Acme", "role", "Dev", "start", "32/13/2020", "user", "2"));
 
-        controller.doPost(req, resp);
+        realController.doPost(req, resp);
 
-        verify(companies, never()).create(any());
+        verify(dao, never()).save(any());
         verify(req).setAttribute("errors", Map.of("start", "Informe uma data válida."));
         verify(req).setAttribute("action", "insert");
+        verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("ARQ-06 POST /company/insert com saída ilegível e nome vazio mostra as duas mensagens e nada é gravado")
+    void insertInvalidEndAndEmptyName() throws Exception {
+        route("/company/insert", Map.of("name", "", "role", "Dev", "start", "2020-01-02", "end", "xx", "user", "2"));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        Map<String, String> expected = new java.util.LinkedHashMap<>();
+        expected.put("end", "Informe uma data válida.");
+        expected.put("name", "Informe o nome.");
+        verify(req).setAttribute("errors", expected);
+        verify(dispatcher).forward(req, resp);
+    }
+
+    @Test
+    @DisplayName("ARQ-06 POST /company/insert só com saída ilegível reexibe o formulário e nada é gravado")
+    void insertOnlyInvalidEnd() throws Exception {
+        route("/company/insert", Map.of("name", "Acme", "role", "Dev", "start", "2020-01-02", "end", "xx", "user", "2"));
+
+        realController.doPost(req, resp);
+
+        verify(dao, never()).save(any());
+        verify(req).setAttribute("errors", Map.of("end", "Informe uma data válida."));
         verify(dispatcher).forward(req, resp);
     }
 
