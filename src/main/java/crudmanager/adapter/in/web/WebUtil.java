@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
 
 /** Utilitários HTTP compartilhados pelos controllers e filtros. */
 public final class WebUtil {
@@ -80,6 +81,14 @@ public final class WebUtil {
         } catch (NumberFormatException e) {
             throw new NotFoundException("Registro não encontrado.");
         }
+    }
+
+    /** Data ISO (yyyy-MM-dd) do input date; vazia ou nula vira null; inválida lança DateTimeParseException. */
+    public static LocalDate parseDate(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        return LocalDate.parse(raw.trim());
     }
 
     public static String route(HttpServletRequest req) {

@@ -114,4 +114,13 @@ class WebUtilTest {
         when(req.getServletPath()).thenReturn("/courses");
         assertEquals("/courses", WebUtil.route(req));
     }
+
+    @Test
+    @DisplayName("ARQ-05 parseDate converte ISO, devolve null para vazio e rejeita data inválida")
+    void parseDate() {
+        assertEquals(java.time.LocalDate.of(2026, 3, 9), WebUtil.parseDate(" 2026-03-09 "));
+        assertNull(WebUtil.parseDate(""));
+        assertNull(WebUtil.parseDate(null));
+        assertThrows(java.time.format.DateTimeParseException.class, () -> WebUtil.parseDate("31/02/2026"));
+    }
 }
