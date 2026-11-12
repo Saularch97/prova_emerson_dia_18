@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 8,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "weak_test::test every field s own error message with several invalid fields in one submit not one bad field at a time",
+      "text": "Test every field's own error message with several invalid fields in one submit, not one bad field at a time",
+      "signal": "weak_test",
+      "scope": "web",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md C21,C33 (F1) (web)"
+      ],
+      "created": "2026-11-12T23:59:25Z",
+      "last_seen": "2026-11-12T23:59:25Z"
+    },
+    {
+      "id": "L-002",
+      "key": "weak_test::name a requirement id on a test only when it asserts the full value the criterion fixes including order limit and resulting state",
+      "text": "Name a requirement ID on a test only when it asserts the full value the criterion fixes, including order, limit and resulting state",
+      "signal": "weak_test",
+      "scope": "tests",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md C38,C44 (F3) (tests)"
+      ],
+      "created": "2026-11-12T23:59:25Z",
+      "last_seen": "2026-11-12T23:59:25Z"
+    },
+    {
+      "id": "L-003",
+      "key": "ac_gap::count text length in characters code points not utf 16 units wherever the spec states a character limit",
+      "text": "Count text length in characters (code points), not UTF-16 units, wherever the spec states a character limit",
+      "signal": "ac_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md F4 (validation)"
+      ],
+      "created": "2026-11-12T23:59:25Z",
+      "last_seen": "2026-11-12T23:59:25Z"
+    },
+    {
+      "id": "L-004",
+      "key": "weak_test::do not give a test a requirement id when it only proves a value is preserved by code that never touches it",
+      "text": "Do not give a test a requirement ID when it only proves a value is preserved by code that never touches it",
+      "signal": "weak_test",
+      "scope": "tests",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md F5 (tests)"
+      ],
+      "created": "2026-11-12T23:59:25Z",
+      "last_seen": "2026-11-12T23:59:25Z"
+    },
+    {
+      "id": "L-005",
+      "key": "weak_test::test each foreign key relation separately with a record bound to only that relation",
+      "text": "Test each foreign-key relation separately with a record bound to only that relation",
+      "signal": "weak_test",
+      "scope": "persistence",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md C63 (F6) (persistence)"
+      ],
+      "created": "2026-11-12T23:59:25Z",
+      "last_seen": "2026-11-12T23:59:25Z"
+    },
+    {
+      "id": "L-006",
+      "key": "ac_gap::give each validation bound its own message and test both sides of the boundary",
+      "text": "Give each validation bound its own message and test both sides of the boundary",
+      "signal": "ac_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "verification.md F2 (validation)"
+      ],
+      "created": "2026-11-12T23:59:26Z",
+      "last_seen": "2026-11-12T23:59:26Z"
+    },
+    {
+      "id": "L-007",
+      "key": "gate_fail::register the jdbc driver explicitly when the app runs in a servlet container tests with the driver on the classpath do not reproduce a missing driver",
+      "text": "Register the JDBC driver explicitly when the app runs in a servlet container; tests with the driver on the classpath do not reproduce a missing driver",
+      "signal": "gate_fail",
+      "scope": "docker",
+      "status": "candidate",
+      "features": [
+        "plataforma-cursos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "T56 docker run (docker)"
+      ],
+      "created": "2026-11-12T23:59:26Z",
+      "last_seen": "2026-11-12T23:59:26Z"
+    }
+  ]
+}
