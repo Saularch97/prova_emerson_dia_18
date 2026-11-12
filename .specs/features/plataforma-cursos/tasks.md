@@ -1527,5 +1527,5 @@ Proof: run all | ✓ EDGE-5
 The feature's live state, written as it happens - a compaction gives no warning.
 
 **Settled mid-build:** Build provisório até a T56 - user: "Linha Build provisória (Recomendado)"; execução em 8 lotes com sub-agentes - user: "Sim, 8 lotes (Recomendado)"
-**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89, returned; Lote 2 (Fase 3, T12-T18) enviado em HEAD c0fac92, returned; Lote 3 (Fase 4, T19-T27) enviado em HEAD 4393df2, returned; Lote 4 (Fase 5, T28-T37) enviado em HEAD 6c45956, returned; Lote 5 (Fase 6, T38-T43) enviado em HEAD 5f925e3
+**Dispatched:** Lote 1 (Fase 1+2, T1-T11) enviado em HEAD 4fd6b89, returned; Lote 2 (Fase 3, T12-T18) enviado em HEAD c0fac92, returned; Lote 3 (Fase 4, T19-T27) enviado em HEAD 4393df2, returned; Lote 4 (Fase 5, T28-T37) enviado em HEAD 6c45956, returned; Lote 5 (Fase 6, T38-T43) enviado em HEAD 5f925e3, returned; Lote 6 (Fase 7, T44-T52) enviado em HEAD 0ce50b3
 **Walked:** none
