@@ -1269,8 +1269,8 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `bash scripts/smoke.sh` imprime `✓ PAG-03`, `✓ PAG-04`, `✓ PAG-08`
-- [ ] Gate passes: `bash scripts/smoke.sh`
+- [x] `bash scripts/smoke.sh` imprime `✓ PAG-03`, `✓ PAG-04`, `✓ PAG-08`
+- [x] Gate passes: `bash scripts/smoke.sh`
 
 **Tests**: none
 **Gate**: smoke

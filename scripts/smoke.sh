@@ -29,7 +29,11 @@ J=""                         # cookie jar do caso corrente
 
 die() { printf '%s' "$*" >"$T/reason"; exit 1; }
 
-psql_q() { docker compose exec -T db psql -U "$PGUSER_" -d "$PGDB_" -tAc "$1" 2>/dev/null; }
+# Argumentos extras do docker compose; vazio = stack principal. Os casos destrutivos apontam para o sandbox.
+DC_ARGS=()
+dc() { docker compose ${DC_ARGS[@]+"${DC_ARGS[@]}"} "$@"; }
+
+psql_q() { dc exec -T db psql -U "$PGUSER_" -d "$PGDB_" -tAc "$1" 2>/dev/null; }
 
 flat() { tr '\n\t\r' '   ' | sed -E 's/ +/ /g'; }
 
@@ -140,27 +144,55 @@ purge_smoke() {
           SELECT setval(pg_get_serial_sequence('enrollments','id'), COALESCE(MAX(id),1), MAX(id) IS NOT NULL) FROM enrollments;" >/dev/null
 }
 
-# Restaura cursos e matriculas ao estado do seed. Escolha: em vez de reaplicar o script inteiro (que derruba
-# e recria tambem users/posts/companies, exigindo parar o app), extrai de script-sql.sql so os INSERTs de
-# courses e enrollments e os reexecuta numa transacao depois de TRUNCATE ... RESTART IDENTITY. Usuarios,
-# posts e empresas nao sao tocados, entao o banco volta a ser identico ao seed.
-restore_seed() {
-  {
-    echo "TRUNCATE enrollments, courses RESTART IDENTITY;"
-    awk '/^INSERT INTO (courses|enrollments)/{p=1} p{print} p && /;[[:space:]]*$/{p=0}' script-sql.sql
-  } | docker compose exec -T db psql -U "$PGUSER_" -d "$PGDB_" -v ON_ERROR_STOP=1 -1 -q >/dev/null 2>&1 || return 1
-  purge_smoke
-  rm -f "$T/seed_dirty"
+# Os casos destrutivos (PAG-08, MATR-11, CURSO-11) precisam de listas com poucos itens ou vazias. Em vez de
+# apagar dados do seed do stack principal, rodam num stack descartavel (projeto compose "crudcursos-smoke",
+# app em localhost:$SANDBOX_PORT, banco proprio criado do mesmo script-sql.sql). O stack principal nunca e
+# tocado por eles e continua identico ao seed. O sandbox e derrubado (down -v, so desse projeto) no trap EXIT.
+SANDBOX_PROJECT="crudcursos-smoke"
+SANDBOX_PORT="${SMOKE_SANDBOX_PORT:-18080}"
+
+sandbox_args() {
+  DC_ARGS=(-p "$SANDBOX_PROJECT" --project-directory "$PWD" -f docker-compose.yml -f "$T/sandbox.yml")
+}
+
+# Sobe (se preciso) o sandbox e o devolve ao estado do seed, reaplicando script-sql.sql (o app nao segura
+# conexoes entre requisicoes, entao o DROP/CREATE do script e seguro). Define BASE, DC_ARGS e o jar via login.
+sandbox_enter() {
+  cat >"$T/sandbox.yml" <<YML
+services:
+  app:
+    ports: !override
+      - "$SANDBOX_PORT:8080"
+YML
+  sandbox_args
+  BASE="http://localhost:$SANDBOX_PORT$CTX"
+  if [ ! -f "$T/sandbox_up" ]; then
+    touch "$T/sandbox_up"
+    dc up -d --build --wait >/dev/null 2>&1 || die "nao consegui subir o stack sandbox"
+  fi
+  wait_app || die "sandbox nao respondeu em $BASE/login"
+  dc exec -T db psql -U "$PGUSER_" -d "$PGDB_" -v ON_ERROR_STOP=1 -q -f - <script-sql.sql >/dev/null 2>&1 \
+    || die "nao consegui restaurar o seed no sandbox"
+}
+
+sandbox_down() {
+  if [ -f "$T/sandbox_up" ]; then
+    sandbox_args
+    dc down -v >/dev/null 2>&1
+    rm -f "$T/sandbox_up"
+    DC_ARGS=()
+  fi
 }
 
 cleanup() {
+  sandbox_down
   if [ -f "$T/db_stopped" ]; then
     docker compose start db >/dev/null 2>&1
     wait_db_healthy
     rm -f "$T/db_stopped"
   fi
-  if docker compose ps -q db >/dev/null 2>&1 && [ -n "$(docker compose ps -q db 2>/dev/null)" ]; then
-    if [ -f "$T/seed_dirty" ]; then restore_seed; else purge_smoke; fi
+  if [ -n "$(docker compose ps -q db 2>/dev/null)" ]; then
+    purge_smoke
   fi
   rm -rf "$T"
 }
@@ -409,11 +441,142 @@ case_ARQ_06() {
   [ "$before" = "$after" ] || die "empresas: sobrou lixo ($before -> $after)"
 }
 
+# ---------------------------------------------------------------- casos: paginacao (seed com mais de 10 itens por lista)
+
+# lista:tabela; todas as cinco listagens paginam.
+PAG_LISTS=("/users:users" "/posts:posts" "/companies:companies" "/courses:courses" "/enrollments:enrollments")
+
+# Cada pagina mostra no maximo 10 linhas, e a ultima mostra o resto.
+case_PAG_01() {
+  login
+  local item url tab total last p b exp
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"; tab="${item#*:}"
+    total="$(psql_q "SELECT count(*) FROM $tab")"
+    [ "$total" -gt 10 ] || die "seed de $tab tem $total linhas (precisa >10)"
+    last=$(( (total + 9) / 10 ))
+    for p in $(seq 1 "$last"); do
+      b="$(GET "$url?page=$p")"
+      exp=10; [ "$p" = "$last" ] && exp=$(( total - 10 * (last - 1) ))
+      [ "$(nrows "$b")" = "$exp" ] || die "$url?page=$p tem $(nrows "$b") linhas, esperava $exp"
+    done
+  done
+}
+
+case_PAG_03() {
+  login
+  local item url b n last
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"
+    b="$(GET "$url")"
+    has_nav "$b" || die "$url: sem controles de paginacao"
+    has "$b" "Anterior" "$url: sem Anterior"
+    has "$b" "Próximo" "$url: sem Próximo"
+    last="$(last_page "$b")"
+    [ "${last:-0}" -ge 2 ] || die "$url: menos de 2 numeros de pagina"
+    for n in $(seq 1 "$last"); do
+      hasre "$b" "<li class=\"[a-z]*\"><a href=\"$CTX$url\?page=$n\">$n</a></li>" "$url: numero $n ausente"
+    done
+    [ "$(active_page "$b")" = "1" ] || die "$url: pagina atual nao e a 1 em li.active"
+    b="$(GET "$url?page=2")"
+    [ "$(active_page "$b")" = "2" ] || die "$url?page=2: li.active nao e a 2"
+  done
+}
+
+case_PAG_04() {
+  login
+  local item url b last
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"
+    b="$(GET "$url")"; last="$(last_page "$b")"
+    hasre "$b" '<li class="disabled"><span>Anterior</span></li>' "$url p.1: Anterior nao esta disabled"
+    hasre "$b" "<li><a href=\"$CTX$url\?page=2\">Próximo</a></li>" "$url p.1: Próximo deveria ser link"
+    lacks "$(flat <<<"$b")" '<li class="disabled"><span>Próximo</span></li>' "$url p.1: Próximo disabled"
+    b="$(GET "$url?page=$last")"
+    hasre "$b" '<li class="disabled"><span>Próximo</span></li>' "$url p.$last: Próximo nao esta disabled"
+    hasre "$b" "<li><a href=\"$CTX$url\?page=$((last - 1))\">Anterior</a></li>" "$url p.$last: Anterior deveria ser link"
+    lacks "$(flat <<<"$b")" '<li class="disabled"><span>Anterior</span></li>' "$url p.$last: Anterior disabled"
+  done
+}
+
+# page ausente/invalida mostra a pagina 1.
+case_PAG_05() {
+  login
+  local item url b1 b v
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"
+    b1="$(GET "$url")"
+    for v in abc 0 -3 ""; do
+      b="$(GET "$url?page=$v")"
+      [ "$(active_page "$b")" = "1" ] || die "$url?page=$v nao mostrou a pagina 1"
+      [ "$(nrows "$b")" = "$(nrows "$b1")" ] || die "$url?page=$v: linhas diferentes da pagina 1"
+    done
+  done
+}
+
+# page acima do limite mostra a ultima pagina.
+case_PAG_06() {
+  login
+  local item url b last
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"
+    last="$(last_page "$(GET "$url")")"
+    b="$(GET "$url?page=999")"
+    [ "$(active_page "$b")" = "$last" ] || die "$url?page=999 nao mostrou a ultima pagina ($last)"
+  done
+}
+
+# Excluir pelo modal o unico item da ultima pagina cai na nova ultima pagina (itens criados pelo caso).
+case_PAG_07() {
+  login
+  local tag="smoke-pag07-$$" total target k i b id last
+  total="$(psql_q 'SELECT count(*) FROM posts')"
+  target=$(( (total + 9) / 10 * 10 + 1 ))      # um item alem de uma pagina cheia
+  k=$(( target - total ))
+  for i in $(seq 1 "$k"); do
+    b="$(POST /post/insert "content=$tag-$i" "user=1")"
+    has "$b" "Post '$tag-$i' salvo com sucesso." "criacao do post $i"
+  done
+  last=$(( (target + 9) / 10 ))
+  b="$(GET "/posts?page=$last")"
+  [ "$(nrows "$b")" = "1" ] || die "ultima pagina ($last) deveria ter 1 item, tem $(nrows "$b")"
+  id="$(grep -oE 'post-id="[0-9]+"' <<<"$b" | grep -oE '[0-9]+')"
+  has "$b" "$tag-$k" "o item unico da ultima pagina nao e o criado pelo caso"
+  b="$(POST /post/delete "id=$id" "page=$last")"
+  has "$b" "Post '$tag-$k' deletado com sucesso." "mensagem de exclusao"
+  [ "$(active_page "$b")" = "$((last - 1))" ] || die "apos excluir, pagina atual e $(active_page "$b"), esperava $((last - 1))"
+  [ "$(last_page "$b")" = "$((last - 1))" ] || die "a nova ultima pagina deveria ser $((last - 1))"
+  purge_smoke
+  [ "$(psql_q 'SELECT count(*) FROM posts')" = "$total" ] || die "sobrou post do caso"
+}
+
+# Lista de uma pagina so esconde a paginacao. Nenhuma lista do seed cabe em 10 itens, entao o caso roda no
+# sandbox (stack descartavel) e reduz as matriculas a exatamente 10 pela UI; o seed do stack principal
+# nao e tocado.
+case_PAG_08() {
+  sandbox_enter
+  login
+  local total extra id b
+  total="$(psql_q 'SELECT count(*) FROM enrollments')"
+  [ "$total" -gt 10 ] || die "seed de matriculas tem $total (esperava >10)"
+  has_nav "$(GET /enrollments)" || die "com $total matriculas a paginacao deveria aparecer"
+  extra=$(( total - 10 ))
+  for id in $(psql_q "SELECT id FROM enrollments ORDER BY id DESC LIMIT $extra"); do
+    b="$(POST /enrollment/delete "id=$id" "page=1")"
+    has "$b" "Matrícula deletada com sucesso." "exclusao da matricula $id"
+  done
+  b="$(GET /enrollments)"
+  [ "$(nrows "$b")" = "10" ] || die "esperava 10 matriculas, a lista tem $(nrows "$b")"
+  has_nav "$b" && die "com 10 itens (uma pagina) os controles de paginacao deveriam sumir"
+  lacks "$b" "Próximo" "link Próximo visivel com uma pagina so"
+}
+
 # ---------------------------------------------------------------- execucao
 
 CASES=(
   AUTH-02 AUTH-06 AUTH-07 NAV-01 NAV-02 NAV-03 DOCK-01 DOCK-02 DOCK-04
   CURSO-01 CURSO-02 CURSO-04 MATR-01 MATR-02 MATR-04 ARQ-06
+  PAG-01 PAG-03 PAG-04 PAG-05 PAG-06 PAG-07 PAG-08
 )
 
 run_case() {
