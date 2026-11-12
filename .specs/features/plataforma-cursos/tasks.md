@@ -870,9 +870,10 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Itera `page.items`; inclui `pagination.jsp`
-- [ ] Mensagem de lista vazia
-- [ ] Gate passes: build gate
+- [x] Itera `page.items`; inclui `pagination.jsp`
+- [x] Mensagem de lista vazia
+- [x] JS preenche #modal-page com pageData.page ao abrir o modal
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build

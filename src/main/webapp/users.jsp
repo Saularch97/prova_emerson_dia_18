@@ -32,7 +32,7 @@
 			    </div>
 			 
 			    <div class="col-md-3">
-			        <a href="/crud-manager/user/form" class="btn btn-danger pull-right h2"><span class="glyphicon glyphicon-plus" /></span>&nbspAdicionar Usuário</a>
+			        <a href="${pageContext.request.contextPath}/user/form" class="btn btn-danger pull-right h2"><span class="glyphicon glyphicon-plus" /></span>&nbspAdicionar Usuário</a>
 			    </div>
 	     	</div>
 	 
@@ -51,26 +51,31 @@
 			                 </tr>
 			            </thead>
 			            <tbody>
-			            	<c:forEach var="user" items="${users}">
+			            	<c:forEach var="user" items="${pageData.items}">
 								<tr>
-				                    <td>${user.getName()}</td>
-				                    <td>${user.getGender()}</td>
-				                    <td>${user.getEmail()}</td>				                    
+				                    <td><c:out value="${user.name}" /></td>
+				                    <td><c:out value="${user.gender}" /></td>
+				                    <td><c:out value="${user.email}" /></td>
 				                    <td class="actions">
 				                        <a class="btn btn-info btn-xs" 
-				                           href="${pageContext.request.contextPath}/user/update?userId=${user.getId()}" >
+				                           href="${pageContext.request.contextPath}/user/update?userId=${user.id}" >
 				                           <span class="glyphicon glyphicon-edit"></span>
 				                        </a>
 				                    </td>
 				                    <td class="actions">
 				                        <a class="btn btn-danger btn-xs modal-remove"
-				                           user-id="${user.getId()}" 
-				                           user-name="${user.getName()}" data-toggle="modal" 
+				                           user-id="${user.id}" 
+				                           user-name="<c:out value='${user.name}' />" data-toggle="modal" 
 				                           data-target="#delete-modal"  href="#"><span 
 				                           class="glyphicon glyphicon-trash"></span></a>
 				                    </td>
 				                </tr>
 							</c:forEach>
+							<c:if test="${empty pageData.items}">
+								<tr>
+									<td colspan="5" class="text-center">Nenhum usuário cadastrado.</td>
+								</tr>
+							</c:if>
 			            </tbody>
 			         </table>
 			 
@@ -79,19 +84,13 @@
 	 
 	     	<div id="bottom" class="row">
 	     		<div class="col-md-12">
-			        <ul class="pagination">
-			            <li class="disabled"><a>&lt; Anterior</a></li>
-			            <li class="disabled"><a>1</a></li>
-			            <li><a href="#">2</a></li>
-			            <li><a href="#">3</a></li>
-			            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-			        </ul><!-- /.pagination -->
+			        <%@include file="pagination.jsp"%>
 			    </div>
 	     	</div>
 		</div>
 		
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+		<script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+		<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 			    // fecha o alert após 3 segundos
@@ -106,7 +105,8 @@
 		            var userId = $(this).attr('user-id');
 		            $(".modal-body #hiddenValue").text("o usuário '"+userName+"'");
 		            $("#id").attr( "value", userId);
-		            $("#form").attr( "action","user/delete");
+		            $("#form").attr( "action","${pageContext.request.contextPath}/user/delete");
+		            $("#modal-page").val(${pageData.page});
 		        })
 			});
 		</script>
