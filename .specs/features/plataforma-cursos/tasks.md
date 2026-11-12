@@ -233,9 +233,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Getters/setters JavaBean compatíveis com EL
-- [ ] Sem import de `java.sql` nem `java.util.Date`
-- [ ] Gate passes: build gate
+- [x] Getters/setters JavaBean compatíveis com EL
+- [x] Sem import de `java.sql` nem `java.util.Date`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
