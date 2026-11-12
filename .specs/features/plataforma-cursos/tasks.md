@@ -1030,9 +1030,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes Mockito com IDs: `CURSO-03`, `CURSO-05`, `CURSO-06`, `CURSO-07`, `CURSO-08` (reexibe com valores), `CURSO-10`, `CURSO-12`, `PAG-07`, `ARQ-05`
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes Mockito com IDs: `CURSO-03`, `CURSO-05`, `CURSO-06`, `CURSO-07`, `CURSO-08` (reexibe com valores), `CURSO-10`, `CURSO-12`, `PAG-07`, `ARQ-05`
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
