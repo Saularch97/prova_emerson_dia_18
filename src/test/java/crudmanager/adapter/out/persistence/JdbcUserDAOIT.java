@@ -20,8 +20,14 @@ class JdbcUserDAOIT extends PostgresTestBase {
     private final JdbcUserDAO dao = new JdbcUserDAO(connectionFactory());
     private final List<String> createdEmails = new ArrayList<>();
 
+    /** Linhas que referenciam usuários criados nos testes; removidas antes dos usuários (ordem das FKs). */
+    private final List<String> cleanupSql = new ArrayList<>();
+
     @AfterEach
     void cleanUp() {
+        for (String sql : cleanupSql) {
+            execute(sql);
+        }
         for (String email : createdEmails) {
             User u = dao.findByEmail(email);
             if (u != null) {
@@ -102,6 +108,51 @@ class JdbcUserDAOIT extends PostgresTestBase {
         assertThrows(RelatedDataException.class, () -> dao.delete(emerson));
 
         assertNotNull(dao.findById(emerson.getId()));
+    }
+
+    /** Cria um usuário ligado por UMA relação (inserida por {@code relationSql}) e confirma que excluir é recusado. */
+    private void assertDeleteRefused(String email, String relationSql, String relationCleanupSql) {
+        User u = saved(email);
+        execute(relationSql.replace(":id", String.valueOf(u.getId())));
+        cleanupSql.add(0, relationCleanupSql.replace(":id", String.valueOf(u.getId())));
+
+        assertThrows(RelatedDataException.class, () -> dao.delete(u));
+
+        assertNotNull(dao.findById(u.getId()));
+    }
+
+    @Test
+    @DisplayName("EDGE-1 excluir usuário que é instrutor de curso lança RelatedDataException e o usuário permanece")
+    void deleteInstructorRefused() {
+        assertDeleteRefused("it-edge1-instructor@mail.com",
+                "INSERT INTO courses (title, description, price, start_date, level, active, instructor_id) "
+                        + "VALUES ('IT edge1', 'd', 1, '2026-01-01', 'INICIANTE', TRUE, :id)",
+                "DELETE FROM courses WHERE instructor_id = :id");
+    }
+
+    @Test
+    @DisplayName("EDGE-1 excluir usuário que é aluno de matrícula lança RelatedDataException e o usuário permanece")
+    void deleteStudentRefused() {
+        assertDeleteRefused("it-edge1-student@mail.com",
+                "INSERT INTO enrollments (student_id, course_id, enrolled_on, status, progress, paid) "
+                        + "VALUES (:id, (SELECT MIN(id) FROM courses), '2026-01-01', 'ATIVA', 0, FALSE)",
+                "DELETE FROM enrollments WHERE student_id = :id");
+    }
+
+    @Test
+    @DisplayName("EDGE-1 excluir usuário que é autor de post lança RelatedDataException e o usuário permanece")
+    void deleteAuthorRefused() {
+        assertDeleteRefused("it-edge1-author@mail.com",
+                "INSERT INTO posts (content, post_date, user_id) VALUES ('IT edge1', '2026-01-01', :id)",
+                "DELETE FROM posts WHERE user_id = :id");
+    }
+
+    @Test
+    @DisplayName("EDGE-1 excluir usuário que é dono de empresa lança RelatedDataException e o usuário permanece")
+    void deleteCompanyOwnerRefused() {
+        assertDeleteRefused("it-edge1-owner@mail.com",
+                "INSERT INTO companies (name, role, start, user_id) VALUES ('IT edge1', 'Dev', '2026-01-01', :id)",
+                "DELETE FROM companies WHERE user_id = :id");
     }
 
     @Test
