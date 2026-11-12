@@ -556,25 +556,57 @@ case_PAG_07() {
   [ "$(psql_q 'SELECT count(*) FROM posts')" = "$total" ] || die "sobrou post do caso"
 }
 
+# Exclui pela UI um item de uma lista. 1o arg: URL de exclusao; 2o: id.
+ui_del() { POST "$1" "id=$2" "page=1" >/dev/null; }
+
+# Remove pela UI tudo que prende o usuario (matriculas, cursos que ele ministra, posts e empresas) e o exclui.
+ui_delete_user() {
+  local u="$1" id
+  for id in $(psql_q "SELECT id FROM enrollments WHERE student_id = $u OR course_id IN (SELECT id FROM courses WHERE instructor_id = $u)"); do ui_del /enrollment/delete "$id"; done
+  for id in $(psql_q "SELECT id FROM courses WHERE instructor_id = $u"); do ui_del /course/delete "$id"; done
+  for id in $(psql_q "SELECT id FROM posts WHERE user_id = $u"); do ui_del /post/delete "$id"; done
+  for id in $(psql_q "SELECT id FROM companies WHERE user_id = $u"); do ui_del /company/delete "$id"; done
+  ui_del /user/delete "$u"
+}
+
 # Lista de uma pagina so esconde a paginacao. Nenhuma lista do seed cabe em 10 itens, entao o caso roda no
-# sandbox (stack descartavel) e reduz as matriculas a exatamente 10 pela UI; o seed do stack principal
-# nao e tocado.
+# sandbox (stack descartavel) e reduz cada uma das cinco listas a <=10 itens pela UI; o seed do stack
+# principal nao e tocado. Ordem: usuarios (libera suas relacoes), cursos, matriculas, posts, empresas.
 case_PAG_08() {
   sandbox_enter
   login
-  local total extra id b
-  total="$(psql_q 'SELECT count(*) FROM enrollments')"
-  [ "$total" -gt 10 ] || die "seed de matriculas tem $total (esperava >10)"
-  has_nav "$(GET /enrollments)" || die "com $total matriculas a paginacao deveria aparecer"
-  extra=$(( total - 10 ))
-  for id in $(psql_q "SELECT id FROM enrollments ORDER BY id DESC LIMIT $extra"); do
-    b="$(POST /enrollment/delete "id=$id" "page=1")"
-    has "$b" "Matrícula deletada com sucesso." "exclusao da matricula $id"
+  local item url tab total extra id e b
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"; tab="${item#*:}"
+    total="$(psql_q "SELECT count(*) FROM $tab")"
+    [ "$total" -gt 10 ] || die "seed de $tab tem $total (esperava >10)"
+    has_nav "$(GET "$url")" || die "com $total itens a paginacao de $url deveria aparecer"
   done
-  b="$(GET /enrollments)"
-  [ "$(nrows "$b")" = "10" ] || die "esperava 10 matriculas, a lista tem $(nrows "$b")"
-  has_nav "$b" && die "com 10 itens (uma pagina) os controles de paginacao deveriam sumir"
-  lacks "$b" "Próximo" "link Próximo visivel com uma pagina so"
+  extra=$(( $(psql_q 'SELECT count(*) FROM users') - 10 ))
+  for id in $(psql_q "SELECT id FROM users WHERE id <> 1 ORDER BY id DESC LIMIT $extra"); do ui_delete_user "$id"; done
+  extra=$(( $(psql_q 'SELECT count(*) FROM courses') - 10 ))
+  if [ "$extra" -gt 0 ]; then
+    for id in $(psql_q "SELECT id FROM courses ORDER BY id DESC LIMIT $extra"); do
+      for e in $(psql_q "SELECT id FROM enrollments WHERE course_id = $id"); do ui_del /enrollment/delete "$e"; done
+      ui_del /course/delete "$id"
+    done
+  fi
+  for item in enrollments:/enrollment posts:/post companies:/company; do
+    tab="${item%%:*}"; url="${item#*:}"
+    extra=$(( $(psql_q "SELECT count(*) FROM $tab") - 10 ))
+    [ "$extra" -gt 0 ] || continue
+    for id in $(psql_q "SELECT id FROM $tab ORDER BY id DESC LIMIT $extra"); do ui_del "$url/delete" "$id"; done
+  done
+  for item in "${PAG_LISTS[@]}"; do
+    url="${item%%:*}"; tab="${item#*:}"
+    total="$(psql_q "SELECT count(*) FROM $tab")"
+    [ "$total" -le 10 ] && [ "$total" -gt 0 ] || die "$tab ficou com $total itens, esperava de 1 a 10"
+    b="$(GET "$url")"
+    [ "$(nrows "$b")" = "$total" ] || die "$url deveria listar $total itens, lista $(nrows "$b")"
+    has_nav "$b" && die "$url com $total itens (uma pagina) deveria esconder os controles de paginacao"
+    lacks "$b" "pagination" "$url mostra 'pagination' com uma pagina so"
+    lacks "$b" "Próximo" "link Próximo visivel em $url com uma pagina so"
+  done
 }
 
 # ---------------------------------------------------------------- casos: persistencia, banco fora e listas vazias
@@ -610,6 +642,17 @@ case_DOCK_06() {
   lacks "$b" "at java." "stack trace exposto"
   lacks "$b" "org.apache" "stack trace exposto"
   docker compose logs --since 5m app 2>/dev/null | grep -q 'Falha ao listar cursos' || die "erro nao foi registrado no log do app"
+  # Rota de login com o banco parado: a pagina de login reaparece com a mensagem, sem erro 500 nem stack trace.
+  b="$(curl -sS --max-time 90 -b "$T/nojar" -c "$T/nojar" -w '\n%{http_code}' \
+       --data-urlencode "email=$LOGIN_EMAIL" --data-urlencode "password=$LOGIN_PASSWORD" "$BASE/login")" \
+    || die "POST /login com banco fora nao respondeu"
+  code="${b##*$'\n'}"; b="${b%$'\n'*}"
+  [ "$code" = "200" ] || die "POST /login com banco fora deu $code, esperava a pagina de login com mensagem de erro"
+  has "$b" "Não foi possível concluir a operação" "mensagem de erro ausente no login"
+  has "$b" 'name="password"' "o login nao reexibiu o formulario"
+  lacks "$b" "Exception" "stack trace exposto no login"
+  lacks "$b" "at java." "stack trace exposto no login"
+  docker compose logs --since 5m app 2>/dev/null | grep -q 'Falha de dados em /login' || die "erro do login nao foi registrado no log do app"
   ensure_db
   b="$(GET /courses)"
   has "$b" "<h3>Cursos</h3>" "app nao se recuperou depois que o banco voltou"

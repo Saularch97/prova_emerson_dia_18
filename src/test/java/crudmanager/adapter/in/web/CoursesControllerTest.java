@@ -247,6 +247,10 @@ class CoursesControllerTest extends ControllerTestBase {
         assertEquals("Curso de Java", captor.getValue().getDescription());
         assertEquals(new BigDecimal("10"), captor.getValue().getPrice());
         assertEquals(2, captor.getValue().getInstructor().getId());
+        assertEquals("", captor.getValue().getTitle());
+        assertEquals(LocalDate.of(2026, 2, 1), captor.getValue().getStartDate());
+        assertEquals(Course.Level.INTERMEDIARIO, captor.getValue().getLevel());
+        assertTrue(captor.getValue().isActive());
         verify(req).setAttribute("errors", errors);
         verify(req).setAttribute("users", allUsers);
         verify(req).setAttribute("action", "insert");

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import crudmanager.application.port.in.AuthUseCase;
+import crudmanager.domain.error.ModelException;
 import crudmanager.domain.error.ValidationException;
 import crudmanager.domain.model.User;
 import jakarta.servlet.RequestDispatcher;
@@ -102,6 +103,23 @@ class LoginControllerTest {
         verify(dispatcher).forward(req, resp);
         verify(req, never()).getSession();
         verify(req, never()).changeSessionId();
+        verify(resp, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    @DisplayName("DOCK-06 banco indisponível no login reexibe login com a mensagem genérica, sem exceção nem sessão")
+    void databaseDown() throws Exception {
+        when(req.getServletPath()).thenReturn("/login");
+        when(req.getParameter("email")).thenReturn("ana@x.com");
+        when(req.getParameter("password")).thenReturn("segredo");
+        when(auth.login("ana@x.com", "segredo")).thenThrow(new ModelException("detalhe interno"));
+
+        controller.doPost(req, resp);
+
+        verify(req).setAttribute("message", "Não foi possível concluir a operação. Tente novamente mais tarde.");
+        verify(req).setAttribute("alertType", WebUtil.ALERT_ERROR);
+        verify(dispatcher).forward(req, resp);
+        verify(req, never()).getSession();
         verify(resp, never()).sendRedirect(anyString());
     }
 
