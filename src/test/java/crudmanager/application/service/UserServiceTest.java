@@ -132,4 +132,15 @@ class UserServiceTest {
             return u;
         }
     }
+
+    @Test
+    @DisplayName("ARQ-06 listAll devolve todos os usuários, sem paginar, para os selects")
+    void listAllReturnsEveryUser() {
+        for (int i = 0; i < 12; i++) {
+            User u = valid();
+            u.setEmail("u" + i + "@mail.com");
+            service.create(u, "segredo");
+        }
+        assertEquals(12, service.listAll().size());
+    }
 }

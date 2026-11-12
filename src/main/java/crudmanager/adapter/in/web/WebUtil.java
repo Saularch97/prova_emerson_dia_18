@@ -18,6 +18,8 @@ public final class WebUtil {
     public static final String ALERT_TYPE_KEY = "alertType";
     public static final int ALERT_ERROR = 0;
     public static final int ALERT_SUCCESS = 1;
+    /** Mensagem exibida quando o acesso a dados falha; o detalhe vai só para o log. */
+    public static final String DB_ERROR_MESSAGE = "Não foi possível concluir a operação. Tente novamente mais tarde.";
 
     private WebUtil() {
     }

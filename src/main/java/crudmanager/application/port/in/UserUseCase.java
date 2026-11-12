@@ -2,11 +2,15 @@ package crudmanager.application.port.in;
 
 import crudmanager.domain.Page;
 import crudmanager.domain.model.User;
+import java.util.List;
 
 /** Porta de entrada dos casos de uso de User. */
 public interface UserUseCase {
     /** Página solicitada, já normalizada (acima da última vira a última). */
     Page<User> list(int page);
+
+    /** Todos os usuários, sem paginação, para preencher selects de formulários. */
+    List<User> listAll();
 
     /** @throws crudmanager.domain.error.NotFoundException se o id não existe */
     User find(int id);

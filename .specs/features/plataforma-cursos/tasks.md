@@ -850,9 +850,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes Mockito: list repassa `page`, insert chama `create`, delete redireciona para `/users?page=N`
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes Mockito: list repassa `page`, insert chama `create`, delete redireciona para `/users?page=N`
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick

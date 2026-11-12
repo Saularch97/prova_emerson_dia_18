@@ -32,6 +32,11 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    public List<User> listAll() {
+        return users.listAll();
+    }
+
+    @Override
     public User find(int id) {
         User user = users.findById(id);
         if (user == null) {
