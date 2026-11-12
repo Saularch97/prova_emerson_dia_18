@@ -137,7 +137,7 @@ class EnrollmentServiceTest {
     }
 
     @Test
-    @DisplayName("MATR-10 o valor de paid é gravado como recebido (false permanece false)")
+    @DisplayName("serviço preserva paid=false recebido (a regra do checkbox ausente é provada no teste web)")
     void unpaidKept() {
         Enrollment e = valid(0, 1, 1);
         e.setPaid(false);

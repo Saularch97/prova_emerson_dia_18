@@ -165,7 +165,7 @@ class CourseServiceTest {
     }
 
     @Test
-    @DisplayName("ARQ-03 o valor de active é gravado como recebido (false permanece false)")
+    @DisplayName("serviço preserva active=false recebido (a regra do checkbox ausente é provada no teste web)")
     void inactiveKept() {
         Course c = valid(0);
         c.setActive(false);
