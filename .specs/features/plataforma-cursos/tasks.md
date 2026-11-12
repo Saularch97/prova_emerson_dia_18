@@ -1307,9 +1307,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Comandos conferidos na execução
-- [ ] Cada artefato do enunciado aponta para seu caminho
-- [ ] Gate passes: build gate
+- [x] Comandos conferidos na execução
+- [x] Cada artefato do enunciado aponta para seu caminho
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
