@@ -451,9 +451,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Um teste por critério com o ID no `@DisplayName`
-- [ ] Duplicidade ignora a própria matrícula na edição
-- [ ] Gate passes: `mvn -q test`
+- [x] Um teste por critério com o ID no `@DisplayName`
+- [x] Duplicidade ignora a própria matrícula na edição
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
