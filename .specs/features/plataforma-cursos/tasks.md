@@ -253,8 +253,8 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Campos do spec: título, descrição, preço `BigDecimal`, início `LocalDate`, nível, ativo, instrutor `User`
-- [ ] Gate passes: build gate
+- [x] Campos do spec: título, descrição, preço `BigDecimal`, início `LocalDate`, nível, ativo, instrutor `User`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
