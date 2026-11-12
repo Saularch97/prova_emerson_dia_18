@@ -184,13 +184,19 @@ sandbox_down() {
   fi
 }
 
-cleanup() {
-  sandbox_down
+# Religa o banco do stack principal se um caso o parou e espera ficar saudavel.
+ensure_db() {
   if [ -f "$T/db_stopped" ]; then
     docker compose start db >/dev/null 2>&1
-    wait_db_healthy
+    wait_db_healthy || return 1
     rm -f "$T/db_stopped"
   fi
+  return 0
+}
+
+cleanup() {
+  sandbox_down
+  ensure_db
   if [ -n "$(docker compose ps -q db 2>/dev/null)" ]; then
     purge_smoke
   fi
@@ -571,12 +577,76 @@ case_PAG_08() {
   lacks "$b" "Próximo" "link Próximo visivel com uma pagina so"
 }
 
+# ---------------------------------------------------------------- casos: persistencia, banco fora e listas vazias
+
+# Curso criado pela UI sobrevive ao reinicio do contêiner da aplicacao (volume nomeado do PostgreSQL).
+case_DOCK_05() {
+  login
+  local title="Smoke Persistência $$" b
+  b="$(POST /course/insert "title=$title" "description=Criado pelo smoke para provar persistência." \
+       "price=10.50" "startDate=2026-09-01" "level=INICIANTE" "active=true" "instructor=1")"
+  has "$b" "Curso '$title' salvo com sucesso." "criacao do curso"
+  docker compose restart app >/dev/null 2>&1 || die "docker compose restart app falhou"
+  wait_app || die "app nao voltou a responder 200 apos o restart"
+  login                                   # a sessao anterior nao e garantida apos o restart
+  locate /courses "$title"
+  b="$(POST /course/delete "id=$(row_id)" "page=$LOC_PAGE")"
+  has "$b" "Curso '$title' deletado com sucesso." "limpeza do curso"
+}
+
+# Banco parado: a pagina mostra a mensagem de erro, sem stack trace. O db e religado antes de sair
+# (flag db_stopped + run_case/trap EXIT religam mesmo se o caso falhar).
+case_DOCK_06() {
+  login
+  touch "$T/db_stopped"
+  docker compose stop db >/dev/null 2>&1 || die "docker compose stop db falhou"
+  local b code
+  b="$(curl -sS --max-time 90 -L -b "$J" -c "$J" -w '\n%{http_code}' "$BASE/courses")" || die "GET /courses com banco fora nao respondeu"
+  code="${b##*$'\n'}"; b="${b%$'\n'*}"
+  [ "$code" = "200" ] || die "GET /courses com banco fora deu $code, esperava a pagina com mensagem de erro"
+  has "$b" "Não foi possível concluir a operação" "mensagem de erro ausente"
+  hasre "$b" 'alert-danger' "mensagem sem estilo de erro"
+  lacks "$b" "Exception" "stack trace exposto"
+  lacks "$b" "at java." "stack trace exposto"
+  lacks "$b" "org.apache" "stack trace exposto"
+  docker compose logs --since 5m app 2>/dev/null | grep -q 'Falha ao listar cursos' || die "erro nao foi registrado no log do app"
+  ensure_db
+  b="$(GET /courses)"
+  has "$b" "<h3>Cursos</h3>" "app nao se recuperou depois que o banco voltou"
+}
+
+# Estado vazio de matriculas (MATR-11) e de cursos (CURSO-11): rodam no sandbox, apagando tudo pela UI;
+# o seed do stack principal nao e tocado.
+case_MATR_11() {
+  sandbox_enter
+  login
+  ui_delete_all /enrollments /enrollment/delete
+  local b
+  b="$(GET /enrollments)"
+  has "$b" "Nenhuma matrícula cadastrada." "mensagem de lista vazia"
+  [ "$(nrows "$b")" = "0" ] || die "ainda ha linhas na lista"
+  [ "$(psql_q 'SELECT count(*) FROM enrollments')" = "0" ] || die "o banco ainda tem matriculas"
+}
+
+case_CURSO_11() {
+  sandbox_enter
+  login
+  ui_delete_all /enrollments /enrollment/delete
+  ui_delete_all /courses /course/delete
+  local b
+  b="$(GET /courses)"
+  has "$b" "Nenhum curso cadastrado." "mensagem de lista vazia"
+  [ "$(nrows "$b")" = "0" ] || die "ainda ha linhas na lista"
+  [ "$(psql_q 'SELECT count(*) FROM courses')" = "0" ] || die "o banco ainda tem cursos"
+}
+
 # ---------------------------------------------------------------- execucao
 
 CASES=(
   AUTH-02 AUTH-06 AUTH-07 NAV-01 NAV-02 NAV-03 DOCK-01 DOCK-02 DOCK-04
   CURSO-01 CURSO-02 CURSO-04 MATR-01 MATR-02 MATR-04 ARQ-06
   PAG-01 PAG-03 PAG-04 PAG-05 PAG-06 PAG-07 PAG-08
+  DOCK-05 DOCK-06 MATR-11 CURSO-11
 )
 
 run_case() {
@@ -584,7 +654,9 @@ run_case() {
   fn="case_${id//-/_}"
   rm -f "$T/reason"
   ( "$fn" )
-  if [ $? -eq 0 ]; then
+  local rc=$?
+  ensure_db || echo "aviso: banco nao voltou a ficar saudavel" >&2
+  if [ $rc -eq 0 ]; then
     printf '✓ %s\n' "$id"
     return 0
   fi

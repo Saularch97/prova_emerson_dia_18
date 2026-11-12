@@ -1288,8 +1288,8 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `bash scripts/smoke.sh` imprime `✓` para os IDs listados, deixa o stack de pé e o banco rodando
-- [ ] Gate passes: `bash scripts/smoke.sh`
+- [x] `bash scripts/smoke.sh` imprime `✓` para os IDs listados, deixa o stack de pé e o banco rodando
+- [x] Gate passes: `bash scripts/smoke.sh`
 
 **Tests**: none
 **Gate**: smoke
