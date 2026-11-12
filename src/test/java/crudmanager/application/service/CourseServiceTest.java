@@ -140,6 +140,23 @@ class CourseServiceTest {
     }
 
     @Test
+    @DisplayName("CURSO-09 o limite conta caracteres, não unidades UTF-16: 100 e 150 emojis são aceitos, 151 é rejeitado")
+    void titleCountsCodePoints() {
+        String emoji = new String(Character.toChars(0x1F600));
+        for (int n : new int[] {100, 150}) {
+            Course ok = valid(0);
+            ok.setTitle(emoji.repeat(n));
+            service.create(ok);
+        }
+        assertEquals(2, courses.count());
+        Course tooLong = valid(0);
+        tooLong.setTitle(emoji.repeat(151));
+        assertEquals("O título deve ter no máximo 150 caracteres.",
+                invalid(() -> service.create(tooLong)).getErrors().get("title"));
+        assertEquals(2, courses.count());
+    }
+
+    @Test
     @DisplayName("CURSO-12 find, update e delete de id inexistente lançam NotFoundException 'Curso não encontrado.'")
     void notFound() {
         assertEquals("Curso não encontrado.", assertThrows(NotFoundException.class, () -> service.find(9)).getMessage());

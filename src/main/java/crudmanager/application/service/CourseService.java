@@ -66,7 +66,7 @@ public class CourseService implements CourseUseCase {
         Map<String, String> errors = new LinkedHashMap<>();
         if (course.getTitle() == null || course.getTitle().isBlank()) {
             errors.put("title", "Informe o título.");
-        } else if (course.getTitle().length() > TITLE_MAX) {
+        } else if (course.getTitle().codePointCount(0, course.getTitle().length()) > TITLE_MAX) {
             errors.put("title", "O título deve ter no máximo " + TITLE_MAX + " caracteres.");
         }
         if (course.getDescription() == null || course.getDescription().isBlank()) {
