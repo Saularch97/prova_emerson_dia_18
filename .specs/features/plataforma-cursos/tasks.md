@@ -750,9 +750,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes `AUTH-03`, `AUTH-04`, `AUTH-05`, `AUTH-07`, `AUTH-08`, `AUTH-11` com Mockito e `AuthUseCase` falso
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes `AUTH-03`, `AUTH-04`, `AUTH-05`, `AUTH-07`, `AUTH-08`, `AUTH-11` com Mockito e `AuthUseCase` falso
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
