@@ -710,9 +710,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Mostra mensagem genérica e link para a home
-- [ ] Não imprime `exception` nem `stackTrace`
-- [ ] Gate passes: build gate
+- [x] Mostra mensagem genérica e link para a home
+- [x] Não imprime `exception` nem `stackTrace`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
