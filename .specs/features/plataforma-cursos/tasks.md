@@ -491,9 +491,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Usa `JdbcConnectionFactory`
-- [ ] Compila; coberto pelos ITs seguintes
-- [ ] Gate passes: build gate
+- [x] Usa `JdbcConnectionFactory`
+- [x] Compila; coberto pelos ITs seguintes
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
