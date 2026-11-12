@@ -131,10 +131,10 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `mvn -q test` imprime `✓ AD-003 listener imprime teste aprovado`
-- [ ] Registro em `META-INF/services/org.junit.platform.launcher.TestExecutionListener` criado junto
-- [ ] Teste falho não imprime a linha `✓`
-- [ ] Gate passes: `mvn -q test`
+- [x] `mvn -q test` imprime `✓ AD-003 listener imprime teste aprovado`
+- [x] Registro em `META-INF/services/org.junit.platform.launcher.TestExecutionListener` criado junto
+- [x] Teste falho não imprime a linha `✓`
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
