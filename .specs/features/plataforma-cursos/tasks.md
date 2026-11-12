@@ -371,9 +371,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes `AUTH-12`, `AUTH-13`, `EDGE-1` passam
-- [ ] Hash gravado, nunca a senha
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes `AUTH-12`, `AUTH-13`, `EDGE-1` passam
+- [x] Hash gravado, nunca a senha
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
