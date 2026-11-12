@@ -411,9 +411,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes: campos obrigatórios, datas inválidas, `list(page)`
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes: campos obrigatórios, datas inválidas, `list(page)`
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
