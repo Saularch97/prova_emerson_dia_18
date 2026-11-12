@@ -1230,9 +1230,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `bash scripts/smoke.sh` imprime `✓` para cada ID listado e sai 0
-- [ ] Falha em qualquer caso sai diferente de 0
-- [ ] Gate passes: `bash scripts/smoke.sh`
+- [x] `bash scripts/smoke.sh` imprime `✓` para cada ID listado e sai 0
+- [x] Falha em qualquer caso sai diferente de 0
+- [x] Gate passes: `bash scripts/smoke.sh`
 
 **Tests**: none
 **Gate**: smoke
