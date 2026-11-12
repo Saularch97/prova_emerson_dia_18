@@ -1090,9 +1090,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes Mockito com IDs `MATR-03`…`MATR-12` do spec
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes Mockito com IDs `MATR-03`…`MATR-12` do spec
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick

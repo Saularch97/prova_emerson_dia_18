@@ -31,6 +31,11 @@ public class CourseService implements CourseUseCase {
     }
 
     @Override
+    public List<Course> listAll() {
+        return courses.listAll();
+    }
+
+    @Override
     public Course find(int id) {
         Course course = courses.findById(id);
         if (course == null) {

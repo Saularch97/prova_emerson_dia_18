@@ -145,4 +145,13 @@ class CourseServiceTest {
         assertEquals(3, service.list(99).getPage());
         assertEquals(5, service.list(99).getItems().size());
     }
+
+    @Test
+    @DisplayName("MATR-02 listAll devolve todos os cursos, sem paginar, para o select do formulário de matrícula")
+    void listAll() {
+        for (int i = 1; i <= 25; i++) {
+            courses.store.put(i, valid(i));
+        }
+        assertEquals(25, service.listAll().size());
+    }
 }
