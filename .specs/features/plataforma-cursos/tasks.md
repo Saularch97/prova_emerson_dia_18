@@ -830,9 +830,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Campo `<input type="hidden" name="page">` no form
-- [ ] JS das listagens preenche `page`
-- [ ] Gate passes: build gate
+- [x] Campo `<input type="hidden" name="page">` no form
+- [ ] JS das listagens preenche `page` (pendente: cada listagem preenche `#modal-page` ao ser criada/migrada nos lotes 5-7)
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
