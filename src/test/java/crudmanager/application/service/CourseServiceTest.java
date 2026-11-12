@@ -113,6 +113,20 @@ class CourseServiceTest {
     }
 
     @Test
+    @DisplayName("CURSO-08 preço 99999999.99 é aceito; 100000000 é rejeitado com a mensagem do limite máximo")
+    void priceUpperBound() {
+        Course top = valid(0);
+        top.setPrice(new BigDecimal("99999999.99"));
+        service.create(top);
+        assertEquals(1, courses.count());
+        Course over = valid(0);
+        over.setPrice(new BigDecimal("100000000"));
+        assertEquals("O preço deve ser no máximo 99999999,99.",
+                invalid(() -> service.create(over)).getErrors().get("price"));
+        assertEquals(1, courses.count());
+    }
+
+    @Test
     @DisplayName("CURSO-09 título com 151 caracteres é rejeitado com mensagem de tamanho máximo; 150 é aceito")
     void titleTooLong() {
         Course c = valid(0);

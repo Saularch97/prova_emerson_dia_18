@@ -73,9 +73,10 @@ public class CourseService implements CourseUseCase {
             errors.put("description", "Informe a descrição.");
         }
         BigDecimal price = course.getPrice();
-        if (price == null || price.signum() < 0 || price.stripTrailingZeros().scale() > 2
-                || price.compareTo(PRICE_LIMIT) >= 0) {
+        if (price == null || price.signum() < 0 || price.stripTrailingZeros().scale() > 2) {
             errors.put("price", "Informe um preço válido (número maior ou igual a zero, com até 2 casas decimais).");
+        } else if (price.compareTo(PRICE_LIMIT) >= 0) {
+            errors.put("price", "O preço deve ser no máximo 99999999,99.");
         }
         if (course.getStartDate() == null) {
             errors.put("startDate", "Informe a data de início.");
