@@ -630,9 +630,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Teste `ARQ-04`: `createDAO` devolve implementação JDBC para cada interface, sem abrir conexão
-- [ ] `UseCases` criado em `adapter/in/web/UseCases.java` junto
-- [ ] Gate passes: `mvn -q test`
+- [x] Teste `ARQ-04`: `createDAO` devolve implementação JDBC para cada interface, sem abrir conexão
+- [x] `UseCases` criado em `adapter/in/web/UseCases.java` junto
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
