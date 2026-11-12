@@ -110,10 +110,10 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `mvn -q -DskipTests package` gera `target/crud-manager.war`
-- [ ] `WEB-INF/lib/` removido do repositório
-- [ ] Nenhuma referência a MySQL no `pom.xml`
-- [ ] Gate passes: build gate
+- [x] `mvn -q -DskipTests package` gera `target/crud-manager.war`
+- [x] `WEB-INF/lib/` removido do repositório
+- [x] Nenhuma referência a MySQL no `pom.xml`
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
