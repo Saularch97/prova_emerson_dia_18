@@ -730,9 +730,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Testes `AUTH-01`, `AUTH-09`, `EDGE-4`, `EDGE-5` com Mockito
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Testes `AUTH-01`, `AUTH-09`, `EDGE-4`, `EDGE-5` com Mockito
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
