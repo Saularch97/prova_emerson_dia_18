@@ -255,10 +255,165 @@ case_DOCK_04() {
     END {exit ok ? 0 : 1}' || die "depends_on do app sem condition: service_healthy"
 }
 
+# ---------------------------------------------------------------- casos: Cursos, Matriculas e CRUDs existentes
+
+case_CURSO_01() {
+  login
+  local b row
+  b="$(GET /courses)"
+  for h in Título Nível Preço Início Ativo Instrutor Editar Excluir; do
+    has "$b" "<th>$h</th>" "coluna $h ausente"
+  done
+  [ "$(nrows "$b")" -gt 0 ] || die "lista sem linhas"
+  [ "$(grep -cE '/course/update\?courseId=[0-9]+' <<<"$b")" = "$(nrows "$b")" ] || die "nem toda linha tem botao Editar e Excluir"
+  hasre "$b" 'Java Básico</td> <td>Iniciante</td> <td>199\.90</td> <td>2026-03-02</td> <td>Sim</td> <td>Emerson Carvalho</td>' "linha do curso seed 'Java Básico' incorreta"
+}
+
+case_CURSO_02() {
+  login
+  local b f s n
+  b="$(GET /course/form)"
+  f="$(flat <<<"$b")"
+  grep -qE '<input type="text"[^>]*name="title"' <<<"$f" || die "title nao e input text"
+  grep -qE '<textarea[^>]*name="description"' <<<"$f" || die "description nao e textarea"
+  grep -qE '<input type="number"[^>]*name="price"' <<<"$f" || die "price nao e input number"
+  grep -qE '<input type="date"[^>]*name="startDate"' <<<"$f" || die "startDate nao e input date"
+  grep -qE '<select[^>]*name="level"' <<<"$f" || die "level nao e select"
+  grep -qE '<input type="checkbox"[^>]*name="active"' <<<"$f" || die "active nao e checkbox"
+  grep -qE '<select[^>]*name="instructor"' <<<"$f" || die "instructor nao e select"
+  s="$(sel "$b" instructor)"
+  n="$(psql_q 'SELECT count(*) FROM users')"
+  [ "$(nopts "$s")" = "$n" ] || die "select de instrutor tem $(nopts "$s") opcoes, o banco tem $n usuarios"
+  while IFS= read -r nome; do
+    grep -qF -- "$nome" <<<"$s" || die "instrutor '$nome' do banco ausente no select"
+  done < <(psql_q 'SELECT nome FROM users ORDER BY id')
+}
+
+case_CURSO_04() {
+  login
+  local href b f row title price start level active instr
+  locate /courses "Java Básico"
+  href="$(row_href)"
+  [ -n "$href" ] || die "link Editar nao encontrado na linha"
+  b="$(GET "${href#"$CTX"}")"
+  f="$(flat <<<"$b")"
+  IFS='|' read -r title price start level active instr < <(psql_q "SELECT title||'|'||price||'|'||start_date||'|'||level||'|'||active||'|'||instructor_id FROM courses WHERE title='Java Básico'")
+  grep -qE "name=\"title\"[^>]*value=\"$title\"" <<<"$f" || die "titulo nao preenchido"
+  grep -qE "name=\"price\"[^>]*value=\"$price\"" <<<"$f" || die "preco nao preenchido ($price)"
+  grep -qE "name=\"startDate\"[^>]*value=\"$start\"" <<<"$f" || die "data nao preenchida ($start)"
+  grep -qE '<textarea[^>]*name="description"[^>]*>Fundamentos da linguagem Java\.</textarea>' <<<"$f" || die "descricao nao preenchida"
+  grep -qE "<option value=\"$level\" selected" <<<"$f" || die "nivel $level nao selecionado"
+  grep -qE "<option value=\"$instr\" selected" <<<"$(sel "$b" instructor)" || die "instrutor $instr nao selecionado"
+  if [ "$active" = "true" ]; then
+    grep -qE '<input type="checkbox"[^>]*name="active"[^>]*checked' <<<"$f" || die "checkbox ativo nao marcado"
+  fi
+}
+
+case_MATR_01() {
+  login
+  local b
+  b="$(GET /enrollments)"
+  for h in Aluno Curso Data Situação Progresso Pago Editar Excluir; do
+    has "$b" "<th>$h</th>" "coluna $h ausente"
+  done
+  [ "$(nrows "$b")" -gt 0 ] || die "lista sem linhas"
+  [ "$(grep -cE '/enrollment/update\?enrollmentId=[0-9]+' <<<"$b")" = "$(nrows "$b")" ] || die "nem toda linha tem botao Editar e Excluir"
+  hasre "$b" 'Luiza Carvalho</td> <td>Java Básico</td> <td>2026-02-20</td> <td>Ativa</td> <td>40%</td> <td>Sim</td>' "linha da matricula seed incorreta"
+}
+
+case_MATR_02() {
+  login
+  local b f su sc
+  b="$(GET /enrollment/form)"
+  f="$(flat <<<"$b")"
+  su="$(sel "$b" student)"; sc="$(sel "$b" course)"
+  [ "$(nopts "$su")" = "$(psql_q 'SELECT count(*) FROM users')" ] || die "select de aluno nao bate com users do banco"
+  [ "$(nopts "$sc")" = "$(psql_q 'SELECT count(*) FROM courses')" ] || die "select de curso nao bate com courses do banco"
+  while IFS= read -r t; do grep -qF -- "$t" <<<"$sc" || die "curso '$t' ausente no select"; done < <(psql_q 'SELECT title FROM courses ORDER BY id')
+  while IFS= read -r t; do grep -qF -- "$t" <<<"$su" || die "aluno '$t' ausente no select"; done < <(psql_q 'SELECT nome FROM users ORDER BY id')
+  grep -qE '<input type="date"[^>]*name="enrolledOn"' <<<"$f" || die "enrolledOn nao e input date"
+  for s in ATIVA CONCLUIDA CANCELADA; do
+    grep -qE "<input type=\"radio\" name=\"status\" value=\"$s\"" <<<"$f" || die "radio de situacao $s ausente"
+  done
+  grep -qE '<input type="range" min="0" max="100"[^>]*name="progress"' <<<"$f" || die "progress nao e range 0-100"
+  grep -qE '<input type="checkbox"[^>]*name="paid"' <<<"$f" || die "paid nao e checkbox"
+}
+
+case_MATR_04() {
+  login
+  local b f href aluno curso
+  locate /enrollments "Luiza Carvalho"
+  href="$(row_href)"
+  [ -n "$href" ] || die "link Editar nao encontrado"
+  b="$(GET "${href#"$CTX"}")"
+  f="$(flat <<<"$b")"
+  IFS='|' read -r aluno curso < <(psql_q "SELECT student_id||'|'||course_id FROM enrollments WHERE id=${href##*=}")
+  grep -qE "<option value=\"$aluno\" selected" <<<"$(sel "$b" student)" || die "aluno $aluno nao selecionado"
+  grep -qE "<option value=\"$curso\" selected" <<<"$(sel "$b" course)" || die "curso $curso nao selecionado"
+  grep -qE 'name="status" value="ATIVA"[^>]*checked' <<<"$f" || die "situacao ATIVA nao marcada"
+  grep -qE 'name="progress"[^>]*value="40"' <<<"$f" || die "progresso 40 nao preenchido"
+  grep -qE '<input type="date"[^>]*name="enrolledOn"[^>]*value="2026-02-20"' <<<"$f" || die "data nao preenchida"
+  grep -qE '<input type="checkbox"[^>]*name="paid"[^>]*checked' <<<"$f" || die "pago nao marcado"
+}
+
+case_ARQ_06() {
+  login
+  local tag="smoke-arq06-$$" b before after href id
+
+  # Usuarios
+  before="$(psql_q 'SELECT count(*) FROM users')"
+  b="$(POST /user/insert "name=Smoke Usuário $tag" "gender=F" "email=$tag@smoke.test" "password=Segredo123")"
+  has "$b" "Usuário 'Smoke Usuário $tag' salvo com sucesso." "usuario: mensagem de criacao"
+  locate /users "Smoke Usuário $tag"
+  href="$(row_href)"; id="$(row_id)"
+  b="$(GET "${href#"$CTX"}")"
+  has "$b" "Smoke Usuário $tag" "usuario: formulario de edicao nao preenchido"
+  b="$(POST /user/update "userId=$id" "name=Smoke Usuário $tag B" "gender=M" "email=$tag@smoke.test" "password=")"
+  has "$b" "Usuário 'Smoke Usuário $tag B' atualizado com sucesso." "usuario: mensagem de edicao"
+  locate /users "Smoke Usuário $tag B"
+  b="$(POST /user/delete "id=$(row_id)" "page=$LOC_PAGE")"
+  has "$b" "Usuário 'Smoke Usuário $tag B' deletado com sucesso." "usuario: mensagem de exclusao"
+  after="$(psql_q 'SELECT count(*) FROM users')"
+  [ "$before" = "$after" ] || die "usuarios: sobrou lixo ($before -> $after)"
+
+  # Posts
+  before="$(psql_q 'SELECT count(*) FROM posts')"
+  b="$(POST /post/insert "content=$tag post" "user=1")"
+  has "$b" "Post '$tag post' salvo com sucesso." "post: mensagem de criacao"
+  locate /posts "$tag post"
+  href="$(row_href)"; id="$(row_id)"
+  b="$(GET "${href#"$CTX"}")"
+  has "$b" "$tag post" "post: formulario de edicao nao preenchido"
+  b="$(POST /post/update "postId=$id" "content=$tag post B" "user=2")"
+  has "$b" "Post '$tag post B' atualizado com sucesso." "post: mensagem de edicao"
+  locate /posts "$tag post B"
+  b="$(POST /post/delete "id=$(row_id)" "page=$LOC_PAGE")"
+  has "$b" "Post '$tag post B' deletado com sucesso." "post: mensagem de exclusao"
+  after="$(psql_q 'SELECT count(*) FROM posts')"
+  [ "$before" = "$after" ] || die "posts: sobrou lixo ($before -> $after)"
+
+  # Empresas
+  before="$(psql_q 'SELECT count(*) FROM companies')"
+  b="$(POST /company/insert "name=Smoke Empresa $tag" "role=Tester" "start=2020-01-01" "end=" "user=1")"
+  has "$b" "Empresa 'Smoke Empresa $tag' salva com sucesso." "empresa: mensagem de criacao"
+  locate /companies "Smoke Empresa $tag"
+  href="$(row_href)"; id="$(row_id)"
+  b="$(GET "${href#"$CTX"}")"
+  has "$b" "Smoke Empresa $tag" "empresa: formulario de edicao nao preenchido"
+  b="$(POST /company/update "companyId=$id" "name=Smoke Empresa $tag B" "role=Lead" "start=2020-01-01" "end=2021-01-01" "user=1")"
+  has "$b" "Empresa 'Smoke Empresa $tag B' atualizada com sucesso." "empresa: mensagem de edicao"
+  locate /companies "Smoke Empresa $tag B"
+  b="$(POST /company/delete "id=$(row_id)" "page=$LOC_PAGE")"
+  has "$b" "Empresa 'Smoke Empresa $tag B' deletada com sucesso." "empresa: mensagem de exclusao"
+  after="$(psql_q 'SELECT count(*) FROM companies')"
+  [ "$before" = "$after" ] || die "empresas: sobrou lixo ($before -> $after)"
+}
+
 # ---------------------------------------------------------------- execucao
 
 CASES=(
   AUTH-02 AUTH-06 AUTH-07 NAV-01 NAV-02 NAV-03 DOCK-01 DOCK-02 DOCK-04
+  CURSO-01 CURSO-02 CURSO-04 MATR-01 MATR-02 MATR-04 ARQ-06
 )
 
 run_case() {
