@@ -331,9 +331,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] Teste `AUTH-10`: dois hashes da mesma senha diferem, o hash não contém a senha, `matches` aceita a certa e recusa a errada, formato inválido recusa sem exceção
-- [ ] `mvn -q test` passa
-- [ ] Gate passes: `mvn -q test`
+- [x] Teste `AUTH-10`: dois hashes da mesma senha diferem, o hash não contém a senha, `matches` aceita a certa e recusa a errada, formato inválido recusa sem exceção
+- [x] `mvn -q test` passa
+- [x] Gate passes: `mvn -q test`
 
 **Tests**: unit
 **Gate**: quick
