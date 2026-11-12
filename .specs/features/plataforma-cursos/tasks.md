@@ -531,8 +531,8 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] IT: salvar com hash, achar por e-mail, paginar, FK vira `RelatedDataException`
-- [ ] Gate passes: `mvn -q verify`
+- [x] IT: salvar com hash, achar por e-mail, paginar, FK vira `RelatedDataException`
+- [x] Gate passes: `mvn -q verify`
 
 **Tests**: integration
 **Gate**: full
