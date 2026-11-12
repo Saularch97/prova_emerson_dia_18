@@ -68,6 +68,24 @@ class JdbcPostDAOIT extends PostgresTestBase {
     }
 
     @Test
+    @DisplayName("PAG-01 findPage devolve 10 linhas por página, em ordem crescente de id, e a 11ª fica na página 2")
+    void pag01PageOfTen() {
+        assertTrue(dao.count() > 10);
+
+        List<Post> first = dao.findPage(0, 10);
+        List<Post> second = dao.findPage(10, 10);
+
+        assertEquals(10, first.size());
+        assertEquals(scalar("SELECT MIN(id) FROM posts"), first.get(0).getId());
+        for (int i = 1; i < first.size(); i++) {
+            assertTrue(first.get(i).getId() > first.get(i - 1).getId());
+        }
+        assertEquals(dao.count() - 10, second.size());
+        assertEquals(scalar("SELECT id FROM posts ORDER BY id OFFSET 10 LIMIT 1"), second.get(0).getId());
+        assertTrue(second.get(0).getId() > first.get(9).getId());
+    }
+
+    @Test
     @DisplayName("ARQ-06 findPage ordena por id crescente com LIMIT/OFFSET e traz o nome do usuário; count devolve o total")
     void paging() {
         assertEquals(13, dao.count());

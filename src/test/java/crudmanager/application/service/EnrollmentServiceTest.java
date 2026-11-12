@@ -164,4 +164,22 @@ class EnrollmentServiceTest {
         assertEquals(3, service.list(99).getPage());
         assertNotNull(service.find(3));
     }
+
+    @Test
+    @DisplayName("PAG-07 excluir o único item da última página e listar a página antiga devolve a nova última página")
+    void pag07DeletingLastPageItem() {
+        for (int i = 1; i <= 11; i++) {
+            enrollments.store.put(i, valid(i, i, i));
+        }
+        assertEquals(1, service.list(2).getItems().size());
+
+        service.delete(11);
+        crudmanager.domain.Page<Enrollment> page = service.list(2);
+
+        assertEquals(1, page.getPage());
+        assertEquals(1, page.getTotalPages());
+        assertEquals(10, page.getItems().size());
+        assertEquals(1, page.getItems().get(0).getId());
+        assertEquals(10, page.getItems().get(9).getId());
+    }
 }

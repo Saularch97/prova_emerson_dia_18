@@ -111,4 +111,22 @@ class CompanyServiceTest {
         assertEquals(1, p.getItems().size());
         assertEquals(2, service.list(50).getPage());
     }
+
+    @Test
+    @DisplayName("PAG-07 excluir o único item da última página e listar a página antiga devolve a nova última página")
+    void pag07DeletingLastPageItem() {
+        for (int i = 1; i <= 11; i++) {
+            companies.store.put(i, new Company(i));
+        }
+        assertEquals(1, service.list(2).getItems().size());
+
+        service.delete(11);
+        crudmanager.domain.Page<Company> page = service.list(2);
+
+        assertEquals(1, page.getPage());
+        assertEquals(1, page.getTotalPages());
+        assertEquals(10, page.getItems().size());
+        assertEquals(1, page.getItems().get(0).getId());
+        assertEquals(10, page.getItems().get(9).getId());
+    }
 }
