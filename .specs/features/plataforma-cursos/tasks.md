@@ -11,7 +11,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 **Design**: `.specs/features/plataforma-cursos/design.md`
 **Status**: Approved
 **Approved**: 2026-11-12 - user: "aprovado"
-**Build**: none - o projeto só ganha build na T1 (pom.xml) e T56 (docker-compose.yml); a T56 restaura `mvn -q -DskipTests package; docker compose config -q`
+**Build**: `mvn -q -DskipTests package; docker compose config -q`
 **Run all**: `mvn verify`
 **Run smoke**: `bash scripts/smoke.sh`
 
@@ -1210,9 +1210,9 @@ T53 → T54 → T55 → T56 → T57 → T58 → T59 → T60 → T61
 
 **Done when**:
 
-- [ ] `docker compose config -q` passa
-- [ ] `docker compose up -d --build --wait` leva a `http://localhost:8080/crud-manager/login` com 200
-- [ ] Gate passes: build gate
+- [x] `docker compose config -q` passa
+- [x] `docker compose up -d --build --wait` leva a `http://localhost:8080/crud-manager/login` com 200
+- [x] Gate passes: build gate
 
 **Tests**: none
 **Gate**: build
