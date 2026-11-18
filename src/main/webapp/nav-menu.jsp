@@ -25,7 +25,6 @@
 			        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><strong>Perfil: ${navfn:escapeXml(sessionScope.loggedUser.name)}</strong>
 			        <span class="caret"></span></a>
 			        <ul class="dropdown-menu">
-			          <li><a href="#"><span class="glyphicon glyphicon-cog" /></span>&nbspDados cadastrais</a></li>
 			          <li><a href="${pageContext.request.contextPath}/logout"><span class="glyphicon glyphicon-log-out" /></span>&nbspSair</a></li>
 			        </ul>
 			    </li>

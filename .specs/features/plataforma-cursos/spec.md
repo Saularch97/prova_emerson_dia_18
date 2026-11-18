@@ -21,7 +21,7 @@ O CRUD Manager (Jakarta EE 10, Servlets/JSP, JDBC, MySQL) tem três cadastros (U
 | Papéis/permissões (admin, aluno) | Enunciado pede só login; todo usuário logado acessa tudo |
 | Auto-cadastro público ("Criar conta") | Não pedido; usuários são criados no CRUD de Usuários |
 | Campo de busca das listagens | Enunciado não pede busca; o campo decorativo foi removido das cinco telas |
-| Menu "Dados cadastrais" do Perfil | Fora do enunciado; permanece sem ação |
+| Menu "Dados cadastrais" do Perfil | Fora do enunciado; o item sem ação foi removido |
 | Recuperação de senha, "lembrar-me", bloqueio por tentativas | Não pedido |
 | Deploy em produção/nuvem | Só Docker local |
 
