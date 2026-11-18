@@ -20,18 +20,7 @@
 			        <h3>Matrículas</h3>
 			    </div>
 			 
-			    <div class="col-md-6">
-			        <div class="input-group h2">
-			            <input name="data[search]" class="form-control" id="search" type="text" placeholder="Pesquisar matrículas">
-			            <span class="input-group-btn">
-			                <button class="btn btn-danger" type="submit">
-			                    <span class="glyphicon glyphicon-search"></span>
-			                </button>
-			            </span>
-			        </div>
-			    </div>
-			 
-			    <div class="col-md-3">
+			    <div class="col-md-9">
 			        <a href="${pageContext.request.contextPath}/enrollment/form" class="btn btn-danger pull-right h2"><span class="glyphicon glyphicon-plus" /></span>&nbspAdicionar Matrícula</a>
 			    </div>
 	     	</div>
