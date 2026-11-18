@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** Regras de arquitetura verificadas varrendo os fontes e o pom.xml (sem dependências extras). */
 class ArchitectureTest {
 
     private static final Path ROOT = projectRoot();

@@ -7,7 +7,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import java.io.IOException;
 
-/** Força UTF-8 em request e response. Registrado no web.xml (a ordem entre filtros vem de lá). */
 public class CharacterEncodingFilter implements Filter {
 
     @Override

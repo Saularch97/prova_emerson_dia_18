@@ -97,13 +97,10 @@
 		<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-			    // fecha o alert após 3 segundos
 			    setTimeout(function() {
 			        $("#alert").slideUp(500);
 			    }, 3000);
 			    
-			    // ao clicar no delete de alguma empresa, pega o nome e o id da empresa
-			    // e a ação (delete) e envia para o modal 
 			    $(".modal-remove").click(function () {
 		            var companyName = $(this).attr('company-name');
 		            var companyId = $(this).attr('company-id');

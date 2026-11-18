@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
-/** Abre conexões PostgreSQL a partir de DB_URL, DB_USER e DB_PASSWORD (sem valores padrão). */
 public class JdbcConnectionFactory {
 
     private final String url;
@@ -45,7 +44,6 @@ public class JdbcConnectionFactory {
 
     public Connection getConnection() {
         try {
-            // No Tomcat o DriverManager não enxerga o driver de WEB-INF/lib sem o registro explícito.
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException e) {

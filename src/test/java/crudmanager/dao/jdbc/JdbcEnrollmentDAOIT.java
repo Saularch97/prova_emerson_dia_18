@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** Os testes criam matrículas apenas para o aluno 15 (João Pereira), que não tem matrículas no seed. */
 class JdbcEnrollmentDAOIT extends PostgresTestBase {
 
     private static final int FREE_STUDENT = 15;

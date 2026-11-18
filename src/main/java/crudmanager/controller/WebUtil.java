@@ -10,16 +10,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 
-/** Utilitários HTTP compartilhados pelos controllers e filtros. */
 public final class WebUtil {
 
-    /** Atributo de sessão com o {@code User} autenticado. */
     public static final String SESSION_USER = "loggedUser";
     public static final String MESSAGE_KEY = "message";
     public static final String ALERT_TYPE_KEY = "alertType";
     public static final int ALERT_ERROR = 0;
     public static final int ALERT_SUCCESS = 1;
-    /** Mensagem exibida quando o acesso a dados falha; o detalhe vai só para o log. */
     public static final String DB_ERROR_MESSAGE = "Não foi possível concluir a operação. Tente novamente mais tarde.";
 
     private WebUtil() {
@@ -30,7 +27,6 @@ public final class WebUtil {
         req.getRequestDispatcher(jsp).forward(req, resp);
     }
 
-    /** Redireciona para contextPath + path (path começa com "/"). */
     public static void redirect(HttpServletRequest req, HttpServletResponse resp, String path) throws IOException {
         resp.sendRedirect(req.getContextPath() + path);
     }
@@ -49,7 +45,6 @@ public final class WebUtil {
         session.setAttribute(ALERT_TYPE_KEY, type);
     }
 
-    /** Move a mensagem flash da sessão para a request, uma única vez. Não cria sessão. */
     public static void transferFlash(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null) {
@@ -71,7 +66,6 @@ public final class WebUtil {
         return Pagination.parse(req.getParameter("page"));
     }
 
-    /** Id numérico; vazio, nulo ou não numérico vira NotFoundException. */
     public static int parseId(String raw) {
         if (raw == null || raw.isBlank()) {
             throw new NotFoundException("Registro não encontrado.");
@@ -83,7 +77,6 @@ public final class WebUtil {
         }
     }
 
-    /** Data ISO (yyyy-MM-dd) do input date; vazia ou nula vira null; inválida lança DateTimeParseException. */
     public static LocalDate parseDate(String raw) {
         if (raw == null || raw.isBlank()) {
             return null;
@@ -95,7 +88,6 @@ public final class WebUtil {
         return req.getServletPath();
     }
 
-    /** Expõe a página para pagination.jsp: atributos {@code pageData} e {@code pageBaseUrl}. */
     public static void pageData(HttpServletRequest req, Page<?> page, String baseUrl) {
         req.setAttribute("pageData", page);
         req.setAttribute("pageBaseUrl", baseUrl);

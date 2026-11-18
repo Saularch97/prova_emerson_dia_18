@@ -9,7 +9,6 @@ import crudmanager.exception.ModelException;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Cria os DAOs JDBC por interface. Os DAOs só abrem conexão quando uma operação é executada. */
 public class DAOFactory {
 
     private final Map<Class<?>, Object> daos = new HashMap<>();

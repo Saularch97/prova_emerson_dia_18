@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/** DAO em memória, ordenado por id. */
 class FakePostDAO implements PostDAO {
     final Map<Integer, Post> store = new TreeMap<>();
     boolean deleteBlocked;

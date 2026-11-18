@@ -9,7 +9,6 @@ import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-/** Hash PBKDF2WithHmacSHA256 no formato {@code iterações:saltB64:hashB64}. */
 public class Pbkdf2PasswordHasher implements PasswordHasher {
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";

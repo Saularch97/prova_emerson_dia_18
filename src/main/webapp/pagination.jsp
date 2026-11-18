@@ -1,6 +1,5 @@
 <jsp:directive.page contentType="text/html; charset=UTF-8" />
 <%@ taglib prefix="pg" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- Requer os atributos de request pageData (Page) e pageBaseUrl (ex.: /courses). Oculto com uma página só. --%>
 <pg:if test="${pageData.totalPages > 1}">
 	<nav id="pagination-nav" aria-label="Paginação">
 		<ul class="pagination">

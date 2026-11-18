@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-/** Exige sessão autenticada em todas as rotas, exceto login e recursos estáticos. */
 public class AuthFilter implements Filter {
 
     private static final String LOGIN_PATH = "/login";

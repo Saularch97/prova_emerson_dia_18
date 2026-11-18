@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 
-/** Mocks de request, response, sessão e dispatcher compartilhados pelos testes de controller. */
 abstract class ControllerTestBase {
 
     protected HttpServletRequest req;

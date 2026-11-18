@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Dados inválidos: mapa campo para mensagem. */
 public class ValidationException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

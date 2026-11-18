@@ -116,7 +116,6 @@ class UserServiceImplTest {
         assertEquals(10, service.list(1).getItems().size());
     }
 
-    /** Cria User com id e copia os campos de outro (modelo não tem setId). */
     private static final class UserWithId {
         private final int id;
 

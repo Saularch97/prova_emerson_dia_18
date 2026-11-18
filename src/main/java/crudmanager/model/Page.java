@@ -2,7 +2,6 @@ package crudmanager.model;
 
 import java.util.List;
 
-/** Página imutável de resultados de uma listagem. */
 public final class Page<T> {
 
     private final List<T> items;

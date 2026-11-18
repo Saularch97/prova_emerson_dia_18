@@ -1,4 +1,3 @@
-# Valores de desenvolvimento; sobrescreva com variáveis de ambiente ou um arquivo .env.
 services:
   db:
     image: postgres:16

@@ -43,7 +43,6 @@ class EnrollmentsControllerTest extends ControllerTestBase {
     private CourseService courses;
     private EnrollmentsController controller;
     private EnrollmentDAO dao;
-    /** Controller ligado ao serviço real (DAO mockado): prova a mescla de erros de parse e de regra. */
     private EnrollmentsController realController;
     private final List<User> allUsers = List.of(new User(1), new User(2));
     private final List<Course> allCourses = List.of(new Course(5), new Course(6));
@@ -73,7 +72,6 @@ class EnrollmentsControllerTest extends ControllerTestBase {
         return e;
     }
 
-    /** Parâmetros de um envio válido; valor null em {@code overrides} remove o parâmetro. */
     private Map<String, String> params(Map<String, String> overrides) {
         Map<String, String> p = new HashMap<>(Map.of("student", "2", "course", "5", "enrolledOn", "2026-03-01",
                 "status", "ATIVA", "progress", "40", "paid", "on"));

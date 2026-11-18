@@ -142,7 +142,6 @@ public class CompaniesController extends HttpServlet {
         WebUtil.forward(req, resp, FORM_JSP);
     }
 
-    /** Devolve false quando já respondeu (formulário reexibido). */
     private boolean save(HttpServletRequest req, HttpServletResponse resp, boolean update)
             throws ServletException, IOException {
         Company company = update ? companies().find(WebUtil.parseId(req.getParameter("companyId"))) : new Company();
@@ -152,8 +151,6 @@ public class CompaniesController extends HttpServlet {
         Map<String, String> errors = new LinkedHashMap<>();
         company.setStart(date(req.getParameter("start"), "start", errors));
         LocalDate end = date(req.getParameter("end"), "end", errors);
-        // Saída ilegível vira LocalDate.MIN: o serviço sempre roda e a rejeita (anterior à entrada) ou rejeita a
-        // entrada ausente, então nada é gravado; a mensagem de parse prevalece.
         company.setEnd(errors.containsKey("end") ? LocalDate.MIN : end);
         try {
             if (update) {
@@ -185,7 +182,6 @@ public class CompaniesController extends HttpServlet {
         WebUtil.success(req, "Empresa '" + company.getName() + "' deletada com sucesso.");
     }
 
-    /** Data inválida vira erro de campo e null; vazia vira null e o serviço decide se é obrigatória. */
     private static LocalDate date(String raw, String field, Map<String, String> errors) {
         try {
             return WebUtil.parseDate(raw);
@@ -195,7 +191,6 @@ public class CompaniesController extends HttpServlet {
         }
     }
 
-    /** Usuário só com id; ausente ou não numérico vira null e o serviço rejeita. */
     private static User userFrom(String raw) {
         try {
             return new User(Integer.parseInt(raw.trim()));

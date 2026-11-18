@@ -8,10 +8,6 @@ import java.util.Map;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.MountableFile;
 
-/**
- * Base dos ITs: um único container postgres:16 por JVM, inicializado com script-sql.sql (o mesmo mecanismo do
- * docker-compose). Testes que alteram dados devem limpar o que criam para não quebrar contagens dos demais.
- */
 public abstract class PostgresTestBase {
 
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16")
@@ -29,7 +25,6 @@ public abstract class PostgresTestBase {
                 "DB_PASSWORD", POSTGRES.getPassword()));
     }
 
-    /** Executa um comando de limpeza/preparo direto no banco. */
     protected static void execute(String sql) {
         try (Connection c = connectionFactory().getConnection(); Statement st = c.createStatement()) {
             st.execute(sql);
@@ -38,7 +33,6 @@ public abstract class PostgresTestBase {
         }
     }
 
-    /** Executa uma consulta de uma linha e uma coluna numérica. */
     protected static long scalar(String sql) {
         try (Connection c = connectionFactory().getConnection();
                 Statement st = c.createStatement();

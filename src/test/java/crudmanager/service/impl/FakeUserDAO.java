@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/** DAO em memória; ids dados pelo teste, ordem por id. */
 class FakeUserDAO implements UserDAO {
     final Map<Integer, User> store = new TreeMap<>();
     boolean deleteBlocked;

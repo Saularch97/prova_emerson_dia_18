@@ -24,7 +24,6 @@ import crudmanager.service.impl.UserServiceImpl;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Composition root: monta serviços, DAOs e hasher. {@link #instance()} lê o ambiente na primeira chamada. */
 public class ServiceLocator {
 
     private static ServiceLocator instance;
@@ -47,7 +46,6 @@ public class ServiceLocator {
         useCases.put(AuthService.class, new AuthServiceImpl(userDAO, hasher));
     }
 
-    /** Instância única criada sob demanda a partir de DB_URL, DB_USER e DB_PASSWORD. */
     public static synchronized ServiceLocator instance() {
         if (instance == null) {
             instance = new ServiceLocator(JdbcConnectionFactory.fromEnvironment());

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** Posts; a raiz do contexto ("") é a home e lista os posts. */
 @WebServlet(urlPatterns = {"", "/posts", "/post/form", "/post/insert", "/post/update", "/post/delete"})
 public class PostsController extends HttpServlet {
 
@@ -136,7 +135,6 @@ public class PostsController extends HttpServlet {
         WebUtil.forward(req, resp, FORM_JSP);
     }
 
-    /** Devolve false quando já respondeu (formulário reexibido). A data do post é definida no servidor ao criar. */
     private boolean save(HttpServletRequest req, HttpServletResponse resp, boolean update)
             throws ServletException, IOException {
         Post post = update ? posts().find(WebUtil.parseId(req.getParameter("postId"))) : new Post();
@@ -163,7 +161,6 @@ public class PostsController extends HttpServlet {
         WebUtil.success(req, "Post '" + post.getContent() + "' deletado com sucesso.");
     }
 
-    /** Usuário só com id; ausente ou não numérico vira null e o serviço rejeita. */
     private static User userFrom(String raw) {
         try {
             return new User(Integer.parseInt(raw.trim()));

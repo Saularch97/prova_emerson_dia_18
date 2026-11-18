@@ -2,7 +2,6 @@ package crudmanager.service.impl;
 
 import crudmanager.security.PasswordHasher;
 
-/** Hasher reversível só para teste: "hash(" + senha + ")". */
 class FakePasswordHasher implements PasswordHasher {
     @Override
     public String hash(String raw) {

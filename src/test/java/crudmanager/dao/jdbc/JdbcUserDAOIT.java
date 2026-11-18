@@ -20,7 +20,6 @@ class JdbcUserDAOIT extends PostgresTestBase {
     private final JdbcUserDAO dao = new JdbcUserDAO(connectionFactory());
     private final List<String> createdEmails = new ArrayList<>();
 
-    /** Linhas que referenciam usuários criados nos testes; removidas antes dos usuários (ordem das FKs). */
     private final List<String> cleanupSql = new ArrayList<>();
 
     @AfterEach
@@ -110,7 +109,6 @@ class JdbcUserDAOIT extends PostgresTestBase {
         assertNotNull(dao.findById(emerson.getId()));
     }
 
-    /** Cria um usuário ligado por UMA relação (inserida por {@code relationSql}) e confirma que excluir é recusado. */
     private void assertDeleteRefused(String email, String relationSql, String relationCleanupSql) {
         User u = saved(email);
         execute(relationSql.replace(":id", String.valueOf(u.getId())));

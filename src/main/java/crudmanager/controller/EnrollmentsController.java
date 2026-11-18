@@ -157,11 +157,6 @@ public class EnrollmentsController extends HttpServlet {
         WebUtil.forward(req, resp, FORM_JSP);
     }
 
-    /**
-     * Devolve false quando já respondeu (formulário reexibido). Data ou progresso não interpretáveis viram valor
-     * inválido (null e {@code -1}) e o serviço sempre roda, rejeitando-os, de modo que nada é gravado; a mensagem de
-     * parse prevalece na mesma chave e as demais mensagens do serviço aparecem juntas; matrícula duplicada vira erro no campo {@code course}.
-     */
     private boolean save(HttpServletRequest req, HttpServletResponse resp, boolean update)
             throws ServletException, IOException {
         Enrollment enrollment = update
@@ -211,7 +206,6 @@ public class EnrollmentsController extends HttpServlet {
         WebUtil.success(req, "Matrícula deletada com sucesso.");
     }
 
-    /** Situação desconhecida ou ausente vira null e o serviço rejeita. */
     private static Enrollment.Status statusFrom(String raw) {
         try {
             return Enrollment.Status.valueOf(raw.trim());
@@ -220,13 +214,11 @@ public class EnrollmentsController extends HttpServlet {
         }
     }
 
-    /** Aluno só com id; ausente ou não numérico vira null e o serviço rejeita. */
     private static User userFrom(String raw) {
         Integer id = idFrom(raw);
         return id == null ? null : new User(id);
     }
 
-    /** Curso só com id; ausente ou não numérico vira null e o serviço rejeita. */
     private static Course courseFrom(String raw) {
         Integer id = idFrom(raw);
         return id == null ? null : new Course(id);

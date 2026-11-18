@@ -144,11 +144,6 @@ public class CoursesController extends HttpServlet {
         WebUtil.forward(req, resp, FORM_JSP);
     }
 
-    /**
-     * Devolve false quando já respondeu (formulário reexibido). Preço não numérico e data inválida viram null e
-     * o serviço sempre roda (ele rejeita null, então nada é gravado); a mensagem de parse prevalece na mesma chave e
-     * as demais mensagens do serviço aparecem juntas. O texto digitado do preço volta em {@code priceInput}.
-     */
     private boolean save(HttpServletRequest req, HttpServletResponse resp, boolean update)
             throws ServletException, IOException {
         Course course = update ? courses().find(WebUtil.parseId(req.getParameter("courseId"))) : new Course();
@@ -202,7 +197,6 @@ public class CoursesController extends HttpServlet {
         WebUtil.success(req, "Curso '" + course.getTitle() + "' deletado com sucesso.");
     }
 
-    /** Aceita vírgula ou ponto decimal; vazio vira null (o serviço exige); texto não numérico lança. */
     static BigDecimal parsePrice(String raw) {
         if (raw == null || raw.isBlank()) {
             return null;
@@ -214,7 +208,6 @@ public class CoursesController extends HttpServlet {
         return new BigDecimal(text);
     }
 
-    /** Nível desconhecido ou ausente vira null e o serviço rejeita. */
     private static Course.Level levelFrom(String raw) {
         try {
             return Course.Level.valueOf(raw.trim());
@@ -223,7 +216,6 @@ public class CoursesController extends HttpServlet {
         }
     }
 
-    /** Usuário só com id; ausente ou não numérico vira null e o serviço rejeita. */
     private static User userFrom(String raw) {
         try {
             return new User(Integer.parseInt(raw.trim()));

@@ -3,7 +3,6 @@ package crudmanager.dao;
 import crudmanager.model.User;
 import java.util.List;
 
-/** Contrato de acesso a dados de User. findById devolve null quando não existe. */
 public interface UserDAO {
     boolean save(User entity);
 

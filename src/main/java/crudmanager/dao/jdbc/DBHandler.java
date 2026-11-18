@@ -10,10 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-/**
- * Envolve uma conexão JDBC por operação. Nunca vaza SQLException: erros viram ModelException; violações de
- * chave estrangeira (23503) e de unicidade (23505) viram RelatedDataException e DuplicateException.
- */
 public class DBHandler {
 
     private static final String FK_VIOLATION = "23503";
@@ -117,12 +113,10 @@ public class DBHandler {
         return read(() -> resultSet.getBigDecimal(column), "getDecimal");
     }
 
-    /** Devolve null quando a coluna é NULL. */
     public LocalDate getDate(String column) {
         return read(() -> resultSet.getObject(column, LocalDate.class), "getDate");
     }
 
-    /** Fecha statement, result set e conexão; pode ser chamado várias vezes. */
     public void close() {
         try {
             if (resultSet != null) {

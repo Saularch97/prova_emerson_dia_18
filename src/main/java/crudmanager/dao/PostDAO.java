@@ -3,7 +3,6 @@ package crudmanager.dao;
 import crudmanager.model.Post;
 import java.util.List;
 
-/** Contrato de acesso a dados de Post. findById devolve null quando não existe. */
 public interface PostDAO {
     boolean save(Post entity);
 

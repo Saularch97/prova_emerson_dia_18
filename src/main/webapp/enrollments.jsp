@@ -99,13 +99,10 @@
 		<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-			    // fecha o alert após 3 segundos
 			    setTimeout(function() {
 			        $("#alert").slideUp(500);
 			    }, 3000);
 			    
-			    // ao clicar no delete de alguma matrícula, pega aluno e curso e o id da
-			    // matrícula e a ação (delete) e envia para o modal 
 			    $(".modal-remove").click(function () {
 		            var enrollmentLabel = $(this).attr('enrollment-label');
 		            var enrollmentId = $(this).attr('enrollment-id');

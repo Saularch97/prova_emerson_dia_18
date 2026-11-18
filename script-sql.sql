@@ -1,5 +1,3 @@
--- PostgreSQL 16. Executado na primeira inicializacao do banco (volume vazio).
--- Senha de todos os usuarios do seed: senha123 (hash PBKDF2WithHmacSHA256, formato iteracoes:saltB64:hashB64).
 
 DROP TABLE IF EXISTS enrollments;
 DROP TABLE IF EXISTS courses;

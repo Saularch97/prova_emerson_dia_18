@@ -41,7 +41,6 @@ class CoursesControllerTest extends ControllerTestBase {
     private UserService users;
     private CoursesController controller;
     private CourseDAO dao;
-    /** Controller ligado ao serviço real (DAO mockado): prova a mescla de erros de parse e de regra. */
     private CoursesController realController;
     private final List<User> allUsers = List.of(new User(1), new User(2));
 
@@ -69,7 +68,6 @@ class CoursesControllerTest extends ControllerTestBase {
         return c;
     }
 
-    /** Parâmetros de um envio válido; chaves de {@code overrides} substituem, valor null remove o parâmetro. */
     private Map<String, String> params(Map<String, String> overrides) {
         Map<String, String> p = new HashMap<>(Map.of("title", "Java", "description", "Curso de Java",
                 "price", "99,90", "startDate", "2026-02-01", "level", "INTERMEDIARIO", "active", "on",

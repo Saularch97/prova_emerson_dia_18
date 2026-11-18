@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 class DAOFactoryTest {
 
-    /** Porta fechada: qualquer tentativa de conectar falharia, então a criação prova que não conecta. */
     private final DAOFactory factory = new DAOFactory(new JdbcConnectionFactory(
             Map.of("DB_URL", "jdbc:postgresql://127.0.0.1:1/inexistente", "DB_USER", "u", "DB_PASSWORD", "p")));
 
