@@ -28,7 +28,7 @@ public class UsersController extends HttpServlet {
     private static final String LIST_URL = "/users";
     private static final String NOT_FOUND = "Usuário não encontrado.";
 
-    private final transient UserUseCase injected;
+    private final UserUseCase injected;
 
     public UsersController() {
         this(null);

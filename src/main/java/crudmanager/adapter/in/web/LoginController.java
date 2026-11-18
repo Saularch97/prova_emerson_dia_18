@@ -22,7 +22,7 @@ public class LoginController extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(LoginController.class.getName());
     static final String LOGIN_JSP = "/login.jsp";
 
-    private final transient AuthUseCase injected;
+    private final AuthUseCase injected;
 
     public LoginController() {
         this(null);

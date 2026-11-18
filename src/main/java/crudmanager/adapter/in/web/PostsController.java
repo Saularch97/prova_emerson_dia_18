@@ -30,8 +30,8 @@ public class PostsController extends HttpServlet {
     private static final String LIST_URL = "/posts";
     private static final String NOT_FOUND = "Post não encontrado.";
 
-    private final transient PostUseCase injectedPosts;
-    private final transient UserUseCase injectedUsers;
+    private final PostUseCase injectedPosts;
+    private final UserUseCase injectedUsers;
 
     public PostsController() {
         this(null, null);

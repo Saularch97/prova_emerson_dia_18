@@ -41,9 +41,9 @@ public class EnrollmentsController extends HttpServlet {
     private static final int INVALID_PROGRESS_VALUE = -1;
     static final String INVALID_PROGRESS = "O progresso deve estar entre 0 e 100.";
 
-    private final transient EnrollmentUseCase injectedEnrollments;
-    private final transient UserUseCase injectedUsers;
-    private final transient CourseUseCase injectedCourses;
+    private final EnrollmentUseCase injectedEnrollments;
+    private final UserUseCase injectedUsers;
+    private final CourseUseCase injectedCourses;
 
     public EnrollmentsController() {
         this(null, null, null);

@@ -36,8 +36,8 @@ public class CoursesController extends HttpServlet {
     static final String INVALID_PRICE = "Informe um preço numérico válido (ex.: 99,90).";
     static final String INVALID_DATE = "Informe uma data de início válida.";
 
-    private final transient CourseUseCase injectedCourses;
-    private final transient UserUseCase injectedUsers;
+    private final CourseUseCase injectedCourses;
+    private final UserUseCase injectedUsers;
 
     public CoursesController() {
         this(null, null);

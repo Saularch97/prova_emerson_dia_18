@@ -35,8 +35,8 @@ public class CompaniesController extends HttpServlet {
     private static final String NOT_FOUND = "Empresa não encontrada.";
     private static final String INVALID_DATE = "Informe uma data válida.";
 
-    private final transient CompanyUseCase injectedCompanies;
-    private final transient UserUseCase injectedUsers;
+    private final CompanyUseCase injectedCompanies;
+    private final UserUseCase injectedUsers;
 
     public CompaniesController() {
         this(null, null);
