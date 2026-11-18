@@ -43,7 +43,7 @@ Os valores padrão são só de desenvolvimento.
 
 ```bash
 mvn test                  # testes unitários e de arquitetura, sem Docker
-mvn verify                # inclui os testes de integração do adaptador JDBC com Testcontainers 1.21.4; exige Docker recente
+mvn verify                # inclui os testes de integração dos DAOs JDBC com Testcontainers 1.21.4; exige Docker recente
 bash scripts/smoke.sh     # smoke test ponta a ponta contra o stack docker compose
 ```
 
@@ -58,7 +58,7 @@ Fluxo: `controller` (HTTP) → `service` (regras de negócio) → `dao` (persist
 ```
 src/main/java/crudmanager/
   controller/                    Servlets, AuthFilter e filtro de encoding: traduzem HTTP para chamadas de serviço e escolhem a JSP
-  service/                       interfaces de serviço (UserService, CourseService, AuthService, ...) e Pagination
+  service/                       interfaces da camada de serviço (UserService, CourseService, AuthService, ...) e Pagination
     impl/                        implementações (UserServiceImpl, ...): validações, paginação, regra de matrícula, autenticação
   dao/                           interfaces DAO (UserDAO, CourseDAO, ...)
     jdbc/                        DAOs JDBC PostgreSQL (Jdbc*DAO), DAOFactory e conexão por variáveis de ambiente
@@ -67,7 +67,7 @@ src/main/java/crudmanager/
   security/                      PasswordHasher e Pbkdf2PasswordHasher (PBKDF2WithHmacSHA256 com salt por usuário)
   config/                        ServiceLocator: ponto de composição que injeta DAOs e hasher nos serviços
 src/main/webapp/                 JSPs (listagens, formulários, cabeçalho, login), CSS/JS estáticos e web.xml
-src/test/java/                   testes JUnit 5 (serviços com DAOs falsos, Mockito nos Servlets, Testcontainers nos DAOs, ArchitectureTest)
+src/test/java/                   testes JUnit 5, com a mesma divisão de pacotes do código: serviços com DAOs falsos, Mockito nos controllers, Testcontainers nos DAOs JDBC e ArchitectureTest
 scripts/smoke.sh                 smoke test do stack
 script-sql.sql                   esquema PostgreSQL e dados de exemplo
 Dockerfile, docker-compose.yml   imagem multi-stage (Maven, depois Tomcat 10.1) e stack app + db
@@ -80,7 +80,7 @@ A regra de dependência é verificada por `ArchitectureTest`: `model`, `exceptio
 | Artefato | Caminho |
 | -------- | ------- |
 | Script SQL (tabelas e dados) | `script-sql.sql` |
-| Modelo (classes de domínio) | `src/main/java/crudmanager/model/` (`User`, `Post`, `Company`, `Course`, `Enrollment`) |
+| Modelo (entidades) | `src/main/java/crudmanager/model/` (`User`, `Post`, `Company`, `Course`, `Enrollment`) |
 | Interfaces DAO | `src/main/java/crudmanager/dao/` (`UserDAO`, `PostDAO`, `CompanyDAO`, `CourseDAO`, `EnrollmentDAO`) |
 | Classes DAO (JDBC) | `src/main/java/crudmanager/dao/jdbc/` (`JdbcUserDAO`, `JdbcPostDAO`, `JdbcCompanyDAO`, `JdbcCourseDAO`, `JdbcEnrollmentDAO`) |
 | DAOFactory | `src/main/java/crudmanager/dao/jdbc/DAOFactory.java` |
