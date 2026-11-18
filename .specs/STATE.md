@@ -8,6 +8,14 @@
 - **Trade-off**: Refatora Users, Posts e Companies, que já funcionavam; mais classes que o tutorial da disciplina.
 - **Scope**: todo o código Java.
 - **Date**: 2026-11-12
+- **Status**: superseded by AD-002
+
+### AD-002
+- **Decision**: Arquitetura em camadas controller → service → dao em `crudmanager.controller`, `service` (+ `service.impl`), `dao` (+ `dao.jdbc`), `model`, `exception`, `security` e `config` (`ServiceLocator` monta as dependências). Serviços e DAOs são interfaces injetadas por construtor (DIP).
+- **Reason**: Pedido do usuário: trocar a hexagonal por camadas com controller, service e DAO, mantendo DI, SOLID e boas práticas.
+- **Trade-off**: Perde-se a nomenclatura de portas/adaptadores; o comportamento e as URLs não mudam.
+- **Scope**: todo o código Java; `ArchitectureTest` (ARQ-01, 02, 05, 07) verifica as dependências entre camadas.
+- **Date**: 2026-11-18
 - **Status**: active
 
 ### AD-002

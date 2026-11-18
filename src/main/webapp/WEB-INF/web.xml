@@ -5,7 +5,7 @@
   <!-- A ordem das declarações define a ordem de execução: encoding primeiro, autenticação depois. -->
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
-    <filter-class>crudmanager.adapter.in.web.CharacterEncodingFilter</filter-class>
+    <filter-class>crudmanager.controller.CharacterEncodingFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CharacterEncodingFilter</filter-name>
@@ -14,7 +14,7 @@
 
   <filter>
     <filter-name>AuthFilter</filter-name>
-    <filter-class>crudmanager.adapter.in.web.AuthFilter</filter-class>
+    <filter-class>crudmanager.controller.AuthFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>

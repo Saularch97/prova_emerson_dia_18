@@ -1,6 +1,6 @@
 # CRUD Manager - Plataforma de Cursos
 
-Aplicação web (Jakarta EE 10, Servlets/JSP, JDBC puro) com cinco cadastros: Usuários, Posts, Empresas, Cursos e Matrículas. Tem login por e-mail e senha, listagens paginadas (10 itens por página) e roda em Docker com PostgreSQL 16 e Tomcat 10.1 (JDK 21). O código segue arquitetura hexagonal (portas e adaptadores).
+Aplicação web (Jakarta EE 10, Servlets/JSP, JDBC puro) com cinco cadastros: Usuários, Posts, Empresas, Cursos e Matrículas. Tem login por e-mail e senha, listagens paginadas (10 itens por página) e roda em Docker com PostgreSQL 16 e Tomcat 10.1 (JDK 21). O código segue arquitetura em camadas (controller, service e DAO), com injeção de dependência por construtor.
 
 ## Como subir
 
@@ -51,47 +51,46 @@ bash scripts/smoke.sh     # smoke test ponta a ponta contra o stack docker compo
 
 Para gerar só o WAR: `mvn -q -DskipTests package` (saída em `target/crud-manager.war`).
 
-## Estrutura (hexagonal)
+## Estrutura (camadas)
+
+Fluxo: `controller` (HTTP) → `service` (regras de negócio) → `dao` (persistência). Cada camada depende da interface da camada abaixo, nunca da implementação.
 
 ```
 src/main/java/crudmanager/
-  domain/                        núcleo, sem Servlet nem JDBC
-    model/                       entidades: User, Post, Company, Course, Enrollment
-    error/                       exceções de domínio (validação, não encontrado, dados relacionados, duplicidade)
-    Page.java                    página de resultados (itens, página atual, total)
-  application/
-    port/in/                     portas de entrada: casos de uso (UserUseCase, CourseUseCase, AuthUseCase, ...)
-    port/out/                    portas de saída: interfaces DAO (UserDAO, CourseDAO, ...) e PasswordHasher
-    service/                     implementam os casos de uso: validações, paginação, regra de matrícula, autenticação
-  adapter/
-    in/web/                      Servlets, AuthFilter e filtro de encoding: traduzem HTTP para as portas de entrada e escolhem a JSP
-    out/persistence/             DAOs JDBC PostgreSQL (Jdbc*DAO), DAOFactory (composition root) e conexão por variáveis de ambiente
-    out/security/                Pbkdf2PasswordHasher (PBKDF2WithHmacSHA256 com salt por usuário)
+  controller/                    Servlets, AuthFilter e filtro de encoding: traduzem HTTP para chamadas de serviço e escolhem a JSP
+  service/                       interfaces de serviço (UserService, CourseService, AuthService, ...) e Pagination
+    impl/                        implementações (UserServiceImpl, ...): validações, paginação, regra de matrícula, autenticação
+  dao/                           interfaces DAO (UserDAO, CourseDAO, ...)
+    jdbc/                        DAOs JDBC PostgreSQL (Jdbc*DAO), DAOFactory e conexão por variáveis de ambiente
+  model/                         entidades (User, Post, Company, Course, Enrollment) e Page
+  exception/                     exceções (validação, não encontrado, dados relacionados, duplicidade)
+  security/                      PasswordHasher e Pbkdf2PasswordHasher (PBKDF2WithHmacSHA256 com salt por usuário)
+  config/                        ServiceLocator: ponto de composição que injeta DAOs e hasher nos serviços
 src/main/webapp/                 JSPs (listagens, formulários, cabeçalho, login), CSS/JS estáticos e web.xml
-src/test/java/                   testes JUnit 5 (serviços com portas falsas, Mockito nos Servlets, Testcontainers nos DAOs, ArchitectureTest)
+src/test/java/                   testes JUnit 5 (serviços com DAOs falsos, Mockito nos Servlets, Testcontainers nos DAOs, ArchitectureTest)
 scripts/smoke.sh                 smoke test do stack
 script-sql.sql                   esquema PostgreSQL e dados de exemplo
 Dockerfile, docker-compose.yml   imagem multi-stage (Maven, depois Tomcat 10.1) e stack app + db
 ```
 
-A regra de dependência é verificada por `ArchitectureTest`: `domain` e `application` não importam `jakarta.servlet`, `java.sql` nem `javax.sql`.
+A regra de dependência é verificada por `ArchitectureTest`: `model`, `exception`, `service`, `security` e as interfaces de `dao` não importam `jakarta.servlet`, `java.sql` nem `javax.sql`; `controller` não importa `dao`; `service` não importa `controller`, `dao.jdbc` nem `config`.
 
 ## Artefatos pedidos pelo enunciado
 
 | Artefato | Caminho |
 | -------- | ------- |
 | Script SQL (tabelas e dados) | `script-sql.sql` |
-| Modelo (classes de domínio) | `src/main/java/crudmanager/domain/model/` (`User`, `Post`, `Company`, `Course`, `Enrollment`) |
-| Interfaces DAO | `src/main/java/crudmanager/application/port/out/` (`UserDAO`, `PostDAO`, `CompanyDAO`, `CourseDAO`, `EnrollmentDAO`) |
-| Classes DAO (JDBC) | `src/main/java/crudmanager/adapter/out/persistence/` (`JdbcUserDAO`, `JdbcPostDAO`, `JdbcCompanyDAO`, `JdbcCourseDAO`, `JdbcEnrollmentDAO`) |
-| DAOFactory | `src/main/java/crudmanager/adapter/out/persistence/DAOFactory.java` |
-| Servlets (controllers) | `src/main/java/crudmanager/adapter/in/web/` (`UsersController`, `PostsController`, `CompaniesController`, `CoursesController`, `EnrollmentsController`) |
+| Modelo (classes de domínio) | `src/main/java/crudmanager/model/` (`User`, `Post`, `Company`, `Course`, `Enrollment`) |
+| Interfaces DAO | `src/main/java/crudmanager/dao/` (`UserDAO`, `PostDAO`, `CompanyDAO`, `CourseDAO`, `EnrollmentDAO`) |
+| Classes DAO (JDBC) | `src/main/java/crudmanager/dao/jdbc/` (`JdbcUserDAO`, `JdbcPostDAO`, `JdbcCompanyDAO`, `JdbcCourseDAO`, `JdbcEnrollmentDAO`) |
+| DAOFactory | `src/main/java/crudmanager/dao/jdbc/DAOFactory.java` |
+| Servlets (controllers) | `src/main/java/crudmanager/controller/` (`UsersController`, `PostsController`, `CompaniesController`, `CoursesController`, `EnrollmentsController`) |
 | JSPs de listagem | `src/main/webapp/users.jsp`, `index.jsp` (Posts), `companies.jsp`, `courses.jsp`, `enrollments.jsp`; paginação em `pagination.jsp` |
 | JSPs de formulário | `src/main/webapp/form-user.jsp`, `form-post.jsp`, `form-company.jsp`, `form-course.jsp`, `form-enrollment.jsp` |
 | Exclusão (modal de confirmação) | `src/main/webapp/modal.html`, incluído em cada listagem; envia o POST para `/<entidade>/delete` |
 | Cabeçalho (menu) | `src/main/webapp/nav-menu.jsp` (inclui `base-head.jsp` nas páginas) |
-| Login: filtro | `src/main/java/crudmanager/adapter/in/web/AuthFilter.java` (registrado em `src/main/webapp/WEB-INF/web.xml`) |
-| Login: controller | `src/main/java/crudmanager/adapter/in/web/LoginController.java` (`/login` e `/logout`) |
+| Login: filtro | `src/main/java/crudmanager/controller/AuthFilter.java` (registrado em `src/main/webapp/WEB-INF/web.xml`) |
+| Login: controller | `src/main/java/crudmanager/controller/LoginController.java` (`/login` e `/logout`) |
 | Login: página | `src/main/webapp/login.jsp` |
 
 ## URLs

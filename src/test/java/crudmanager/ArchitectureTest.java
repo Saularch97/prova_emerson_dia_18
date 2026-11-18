@@ -48,10 +48,10 @@ class ArchitectureTest {
     }
 
     @Test
-    @DisplayName("ARQ-01 pacotes hexagonais existem e contêm classes")
+    @DisplayName("ARQ-01 pacotes das camadas existem e contêm classes")
     void packagesExist() {
-        for (String pkg : List.of("domain", "application/port/in", "application/port/out",
-                "application/service", "adapter/in/web", "adapter/out/persistence")) {
+        for (String pkg : List.of("model", "exception", "dao", "dao/jdbc", "service", "service/impl", "security",
+                "controller", "config")) {
             Path dir = MAIN.resolve(pkg);
             assertTrue(Files.isDirectory(dir), "pacote ausente: " + pkg);
             assertFalse(javaFiles(dir).isEmpty(), "pacote sem classes: " + pkg);
@@ -59,10 +59,17 @@ class ArchitectureTest {
     }
 
     @Test
-    @DisplayName("ARQ-02 domain e application não importam jakarta.servlet, java.sql nem javax.sql")
-    void domainAndApplicationAreFrameworkFree() {
-        List<Path> files = new ArrayList<>(javaFiles(MAIN.resolve("domain")));
-        files.addAll(javaFiles(MAIN.resolve("application")));
+    @DisplayName("ARQ-02 model, exception, dao (interfaces), service e security não importam jakarta.servlet, java.sql nem javax.sql")
+    void businessLayersAreFrameworkFree() {
+        List<Path> files = new ArrayList<>();
+        for (String pkg : List.of("model", "exception", "service", "security")) {
+            files.addAll(javaFiles(MAIN.resolve(pkg)));
+        }
+        try (Stream<Path> s = Files.list(MAIN.resolve("dao"))) {
+            s.filter(p -> p.toString().endsWith(".java")).forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
         assertFalse(files.isEmpty(), "a varredura não encontrou fontes");
         List<String> violations = new ArrayList<>();
         for (Path f : files) {
@@ -79,20 +86,35 @@ class ArchitectureTest {
     }
 
     @Test
-    @DisplayName("ARQ-05 adapter/in/web (exceto UseCases) não importa java.sql nem DAOs")
-    void webAdapterHasNoPersistence() {
-        List<Path> files = javaFiles(MAIN.resolve("adapter/in/web"));
+    @DisplayName("ARQ-05 controller não importa java.sql nem o pacote dao")
+    void controllerHasNoPersistence() {
+        List<Path> files = javaFiles(MAIN.resolve("controller"));
         assertFalse(files.isEmpty(), "a varredura não encontrou fontes");
         List<String> violations = new ArrayList<>();
         for (Path f : files) {
-            if (f.getFileName().toString().equals("UseCases.java")) {
-                continue;
-            }
             for (String line : read(f).split("\n")) {
                 String t = line.trim();
                 if (t.startsWith("import ") && (t.contains("java.sql") || t.contains("javax.sql")
-                        || t.contains("application.port.out") || t.contains("persistence.Jdbc"))) {
+                        || t.contains("crudmanager.dao"))) {
                     violations.add(f.getFileName() + ": " + t);
+                }
+            }
+        }
+        assertTrue(violations.isEmpty(), "imports proibidos: " + violations);
+    }
+
+    @Test
+    @DisplayName("ARQ-07 service não depende de controller nem da implementação JDBC")
+    void serviceDependsOnlyOnAbstractions() {
+        List<Path> files = javaFiles(MAIN.resolve("service"));
+        assertFalse(files.isEmpty(), "a varredura não encontrou fontes");
+        List<String> violations = new ArrayList<>();
+        for (Path f : files) {
+            for (String line : read(f).split("\n")) {
+                String t = line.trim();
+                if (t.startsWith("import ") && (t.contains("crudmanager.controller")
+                        || t.contains("crudmanager.dao.jdbc") || t.contains("crudmanager.config"))) {
+                    violations.add(MAIN.relativize(f) + ": " + t);
                 }
             }
         }
